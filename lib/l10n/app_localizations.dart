@@ -1,0 +1,90 @@
+import 'package:flutter/material.dart';
+
+class AppLocalizations {
+  final Locale locale;
+
+  AppLocalizations(this.locale);
+
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations) ??
+        AppLocalizations(const Locale('en'));
+  }
+
+  late Map<String, Map<String, String>> translations = {
+    'appTitle': {'en': 'PhnomPenhVELO', 'km': 'វេល៉ូភ្នំពេញ'},
+    'searchHint': {
+      'en': 'find stations near you',
+      'km': 'ស្វែងរកស្ថានីយនៅជិតអ្នក',
+    },
+    'locationError': {
+      'en': 'Enable location services',
+      'km': 'បើកសេវាកម្មទីតាំង',
+    },
+    'permissionError': {
+      'en': 'Location permission denied',
+      'km': 'ការអនុញ្ញាតទីតាំងត្រូវបានបដិសេធ',
+    },
+    'retry': {'en': 'Retry', 'km': 'ព្យាយាមម្តងទៀត'},
+    'available': {'en': 'Available', 'km': 'ដែលមាន'},
+    'bikes': {'en': 'Bikes', 'km': 'ម៉ូតូកង់'},
+    'distance': {'en': 'Distance', 'km': 'ចម្ងាយ'},
+    'address': {'en': 'Address', 'km': 'អាសយដ្ឋាន'},
+    'navigate': {'en': 'Navigate', 'km': 'ទិសដៅ'},
+    'map': {'en': 'Map', 'km': 'ផែនទី'},
+    'passes': {'en': 'Passes', 'km': 'កញ្ចប់'},
+    'rides': {'en': 'Rides', 'km': 'ការជិះ'},
+    'station': {'en': 'Station', 'km': 'ស្ថានីយ'},
+    'away': {'en': 'away', 'km': 'ឆ្ងាយ'},
+    'selectStation': {
+      'en': 'Tap a station to view details',
+      'km': 'ចុចលើស្ថានីយដើម្បីមើលលម្អិត',
+    },
+    'navigateToStation': {
+      'en': 'Opening navigation to station',
+      'km': 'បើកទិសដៅទៅស្ថានីយ',
+    },
+    'noPassesYet': {
+      'en': 'No passes available yet',
+      'km': 'មិនមានកញ្ចប់ដែលមាន',
+    },
+    'noRidesYet': {'en': 'No rides yet', 'km': 'មិនមានការជិះនៅឡើយ'},
+    'location': {'en': 'Location', 'km': 'ទីតាំង'},
+    'bikesAvailable': {'en': 'bikes available', 'km': 'ម៉ូតូកង់ដែលមាន'},
+    'km': {'en': 'km', 'km': 'គ.ម'},
+    'yourPasses': {'en': 'Your Passes', 'km': 'កញ្ចប់របស់អ្នក'},
+    'yourRides': {'en': 'Your Rides', 'km': 'ការជិះរបស់អ្នក'},
+    'station05': {'en': 'Station 05', 'km': 'ស្ថានីយ ០៥'},
+    'greenpark': {'en': 'Green Park', 'km': 'សួនរលាក់'},
+    'station08': {'en': 'Station 08', 'km': 'ស្ថានីយ ០៨'},
+    'downtowncenter': {'en': 'Downtown Center', 'km': 'កណ្តាលក្រុង'},
+    'station04': {'en': 'Station 04', 'km': 'ស្ថានីយ ០៤'},
+    'mainstreet': {'en': 'Main Street', 'km': 'ផ្លូវលេខ ១'},
+    'station13': {'en': 'Station 13', 'km': 'ស្ថានីយ ១៣'},
+    'westdistrict': {'en': 'West District', 'km': 'លិច'},
+    'station10': {'en': 'Station 10', 'km': 'ស្ថានីយ ១០'},
+    'eastmarket': {'en': 'East Market', 'km': 'កើត'},
+  };
+
+  String get(String key) {
+    return translations[key]?[locale.languageCode] ??
+        translations[key]?['en'] ??
+        key;
+  }
+
+  String getString(String key) => get(key);
+}
+
+class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+  const AppLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => ['en', 'km'].contains(locale.languageCode);
+
+  @override
+  Future<AppLocalizations> load(Locale locale) {
+    return Future.value(AppLocalizations(locale));
+  }
+
+  @override
+  bool shouldReload(AppLocalizationsDelegate old) => false;
+}
