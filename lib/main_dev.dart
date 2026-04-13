@@ -1,0 +1,41 @@
+import 'package:provider/provider.dart';
+import 'package:velo_pp/data/repositories/auth/auth_repository.dart';
+import 'package:velo_pp/data/repositories/auth/mock_auth_repository.dart';
+import 'package:velo_pp/data/repositories/bikes/bikes_repository.dart';
+import 'package:velo_pp/data/repositories/bikes/mock_bikes_repository.dart';
+import 'package:velo_pp/data/repositories/bookings/bookings_repository.dart';
+import 'package:velo_pp/data/repositories/bookings/mock_bookings_repository.dart';
+import 'package:velo_pp/data/repositories/passes/passes_repository.dart';
+import 'package:velo_pp/data/repositories/passes/mock_passes_repository.dart';
+import 'package:velo_pp/data/repositories/stations/stations_repository.dart';
+import 'package:velo_pp/data/repositories/stations/mock_stations_repository.dart';
+import 'package:velo_pp/main_common.dart';
+import 'package:velo_pp/ui/states/app_settings_state.dart';
+
+/// Configure provider dependencies for dev environment.
+List<InheritedProvider> get devProviders {
+  return [
+    ChangeNotifierProvider<AppSettingsState>(create: (_) => AppSettingsState()),
+    ChangeNotifierProvider<AuthRepository>(create: (_) => MockAuthRepository()),
+    ChangeNotifierProvider<StationsRepository>(
+      create: (_) => MockStationsRepository(),
+    ),
+    ChangeNotifierProvider<BikesRepository>(
+      create: (_) => MockBikesRepository(),
+    ),
+    ChangeNotifierProvider<PassesRepository>(
+      create: (_) => MockPassesRepository(),
+    ),
+    ChangeNotifierProvider<BookingsRepository>(
+      create: (_) => MockBookingsRepository(),
+    ),
+  ];
+}
+
+void main() {
+  runDevApp();
+}
+
+void runDevApp() {
+  mainCommon(devProviders);
+}
