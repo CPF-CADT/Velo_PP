@@ -43,14 +43,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(_isFocused ? 0.15 : 0.08),
-            blurRadius: _isFocused ? 12 : 8,
-            spreadRadius: _isFocused ? 1 : 0,
-            offset: const Offset(0, 2),
-          ),
-        ],
         border: Border.all(
           color: _isFocused ? Colors.teal : Colors.grey[300]!,
           width: 1.5,

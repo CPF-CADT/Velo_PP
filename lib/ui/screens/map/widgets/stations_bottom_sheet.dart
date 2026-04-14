@@ -102,11 +102,11 @@ class StationsBottomSheet extends StatelessWidget {
     bool isSelected,
     AppLocalizations loc,
   ) {
-    final distance = DistanceCalculator.calculateDistance(
+    final distance = CustomDistanceCalculator.calculateDistance(
       userLocation,
       station.location,
     );
-    final distanceKm = DistanceCalculator.formatDistance(distance);
+    final distanceKm = CustomDistanceCalculator.formatDistance(distance);
 
     return Container(
       padding: const EdgeInsets.all(12),

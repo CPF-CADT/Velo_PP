@@ -19,13 +19,18 @@ class StationModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    final distance = DistanceCalculator.calculateDistance(
+    final distance = CustomDistanceCalculator.calculateDistance(
       userLocation,
       station.location,
     );
-    final distanceKm = DistanceCalculator.formatDistance(distance);
+    final distanceKm = CustomDistanceCalculator.formatDistance(distance);
     final repo = context.watch<BikesRepository>();
-    final availableBikes = repo.getAvailableBikesForStation(station.id).length;
+    final availableBikesFromRepo = repo
+        .getAvailableBikesForStation(station.id)
+        .length;
+    final availableBikes = availableBikesFromRepo > 0
+        ? availableBikesFromRepo
+        : station.bikesAvailable;
 
     return Container(
       padding: const EdgeInsets.all(20),
