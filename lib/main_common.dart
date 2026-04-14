@@ -65,11 +65,6 @@ class _MainScreenState extends State<MainScreen> {
   int _currentTab = 1;
   static const int _mapTabIndex = 1;
 
-  String _getCurrentLanguage() {
-    final locale = Localizations.localeOf(context);
-    return locale.languageCode;
-  }
-
   void _openProfile() {
     Navigator.of(context).push(
       MaterialPageRoute(

@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:latlong2/latlong.dart';
 
-class DistanceCalculator {
+class CustomDistanceCalculator {
   /// Calculate distance between two locations in meters using Haversine formula
   static double calculateDistance(LatLng userLocation, LatLng stationLocation) {
     const p = 0.017453292519943295;

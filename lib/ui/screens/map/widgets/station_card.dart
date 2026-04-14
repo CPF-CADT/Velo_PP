@@ -19,7 +19,7 @@ class StationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    final distance = DistanceCalculator.calculateDistance(
+    final distance = CustomDistanceCalculator.calculateDistance(
       // This will be passed from parent
       LatLng(0, 0), // Placeholder - should be user location
       station.location,
@@ -68,7 +68,7 @@ class StationCard extends StatelessWidget {
               ),
             ),
             Text(
-              '${DistanceCalculator.formatDistance(distance)} ${loc.get('km')}',
+              '${CustomDistanceCalculator.formatDistance(distance)} ${loc.get('km')}',
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 13,

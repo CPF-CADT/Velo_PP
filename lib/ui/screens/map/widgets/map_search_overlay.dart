@@ -24,15 +24,6 @@ class MapSearchOverlay extends StatelessWidget {
         bottom: false,
         child: Container(
           margin: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 8,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
