@@ -15,10 +15,10 @@ Implement full pass selection and activation logic with one active pass maximum 
 
 ### Acceptance Criteria
 
--✓ User can choose Day, Monthly, and Annual pass.
--✓ Each pass has start date and expiration date.
--✓ User cannot have more than one active pass at a time.
--✓ If buying a new pass, the previous active pass is replaced or deactivated.
+- ✓ User can choose Day, Monthly, and Annual pass.
+- ✓ Each pass has start date and expiration date.
+- ✓ User cannot have more than one active pass at a time.
+- ✓ If buying a new pass, the previous active pass is replaced or deactivated.
 
 ### Subtasks
 
