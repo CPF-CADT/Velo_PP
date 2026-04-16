@@ -15,19 +15,19 @@ Implement full pass selection and activation logic with one active pass maximum 
 
 ### Acceptance Criteria
 
-- User can choose Day, Monthly, and Annual pass.
-- Each pass has start date and expiration date.
-- User cannot have more than one active pass at a time.
-- If buying a new pass, the previous active pass is replaced or deactivated.
+-✓ User can choose Day, Monthly, and Annual pass.
+-✓ Each pass has start date and expiration date.
+-✓ User cannot have more than one active pass at a time.
+-✓ If buying a new pass, the previous active pass is replaced or deactivated.
 
 ### Subtasks
 
-- [ ] Add repository write methods for pass purchase and activation.
-- [ ] Add ViewModel actions in passes module to purchase and select pass.
-- [ ] Update pass UI cards with action states: Select, Buy, Active, Expired.
-- [ ] Implement single active pass replacement rule.
-- [ ] Add expiration helper methods such as isExpired and isActiveNow.
-- [ ] Add tests for single active pass behavior.
+- [✓] Add repository write methods for pass purchase and activation.
+- [✓] Add ViewModel actions in passes module to purchase and select pass.
+- [✓] Update pass UI cards with action states: Select, Buy, Active, Expired.
+- [✓] Implement single active pass replacement rule.
+- [✓] Add expiration helper methods such as isExpired and isActiveNow.
+- [✓] Add tests for single active pass behavior.
 
 ---
 

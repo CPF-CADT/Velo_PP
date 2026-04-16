@@ -3,13 +3,17 @@ class Pass {
   final String name;
   final double price;
   final int durationHours;
+  final List<String> features;
 
   const Pass({
     required this.id,
     required this.name,
     required this.price,
     required this.durationHours,
+    required this.features,
   });
+
+  
 
   Map<String, dynamic> toMap() {
     return {
@@ -17,6 +21,7 @@ class Pass {
       'name': name,
       'price': price,
       'duration_hours': durationHours,
+      'features': features,
     };
   }
 
@@ -26,6 +31,7 @@ class Pass {
       name: map['name'] ?? '',
       price: (map['price'] ?? 0).toDouble(),
       durationHours: map['duration_hours'] ?? map['durationHours'] ?? 0,
+      features: List<String>.from(map['features'] ?? []),
     );
   }
 }

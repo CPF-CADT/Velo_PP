@@ -1,3 +1,4 @@
+
 class UserPass {
   final String id;
   final String userId;
@@ -14,7 +15,16 @@ class UserPass {
     required this.endDate,
     required this.isActive,
   });
-
+   // check if the pass expired or not
+  bool get isExpired => DateTime.now().isAfter(endDate);
+ // check if the pass of user is active or not
+  bool get isActiveNow => !isExpired && isActive;
+ 
+ // validate the date lefts of pass
+ int get remainingDays{
+  if(isExpired) return 0;
+  return endDate.difference(DateTime.now()).inDays;  // convert this into day formats
+ }
   Map<String, dynamic> toMap() {
     return {
       'id': id,
