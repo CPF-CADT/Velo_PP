@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart' show LatLng;
 import 'package:velo_pp/core/utils/distance_calculator.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
 import 'package:velo_pp/model/station.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../widgets/search_bar.dart';
@@ -64,9 +67,9 @@ class _MapSearchOverlayState extends State<MapSearchOverlay> {
           );
 
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppSpacing.r14),
         onTap: () {
           _searchController.text = station.name;
           widget.onSearchChanged(station.name);
@@ -75,27 +78,32 @@ class _MapSearchOverlayState extends State<MapSearchOverlay> {
         },
         child: Ink(
           decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFA),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0x1A00897B)),
+            color: AppColors.primaryMuted,
+            borderRadius: BorderRadius.circular(AppSpacing.r14),
+            border: Border.all(
+              color: AppColors.withAlpha(AppColors.primary, 0.1),
+            ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: AppSpacing.symmetric(
+            horizontal: AppSpacing.s12,
+            vertical: AppSpacing.s10,
+          ),
           child: Row(
             children: [
               Container(
-                width: 34,
-                height: 34,
-                decoration: const BoxDecoration(
-                  color: Color(0x1900897B),
+                width: AppSpacing.s34,
+                height: AppSpacing.s34,
+                decoration: BoxDecoration(
+                  color: AppColors.withAlpha(AppColors.primary, 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.pedal_bike,
-                  size: 18,
-                  color: Colors.teal,
+                  size: AppSpacing.s18,
+                  color: AppColors.primary,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: AppSpacing.s10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,21 +113,19 @@ class _MapSearchOverlayState extends State<MapSearchOverlay> {
                       station.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: AppTextStyles.body.copyWith(
                         fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: Color(0xFF1C2328),
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     Text(
                       '${station.bikesAvailable} ${loc.get('bikesAvailable')}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12,
+                      style: AppTextStyles.caption.copyWith(
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF5D6A71),
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -127,21 +133,22 @@ class _MapSearchOverlayState extends State<MapSearchOverlay> {
               ),
               if (distance != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
+                  padding: AppSpacing.symmetric(
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.xs,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: const Color(0x26000000)),
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(AppSpacing.pill),
+                    border: Border.all(
+                      color: AppColors.withAlpha(AppColors.black, 0.15),
+                    ),
                   ),
                   child: Text(
                     _formatDistance(loc, distance),
-                    style: const TextStyle(
+                    style: AppTextStyles.caption.copyWith(
                       fontWeight: FontWeight.w700,
-                      fontSize: 11,
-                      color: Color(0xFF273238),
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -164,7 +171,7 @@ class _MapSearchOverlayState extends State<MapSearchOverlay> {
       child: SafeArea(
         bottom: false,
         child: Container(
-          margin: const EdgeInsets.all(12),
+          margin: AppSpacing.all(AppSpacing.s12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -173,31 +180,33 @@ class _MapSearchOverlayState extends State<MapSearchOverlay> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.only(left: 12),
+                    padding: AppSpacing.only(left: AppSpacing.s12),
                     child: Text(
                       loc.get('appTitle'),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
+                      style: AppTextStyles.title.copyWith(
+                        color: AppColors.primary,
                       ),
                     ),
                   ),
                   InkWell(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(AppSpacing.r20),
                     onTap: widget.onProfileTap,
                     child: const CircleAvatar(
-                      radius: 18,
-                      backgroundColor: Colors.teal,
-                      child: Icon(Icons.person, color: Colors.white, size: 18),
+                      radius: AppSpacing.s18,
+                      backgroundColor: AppColors.primary,
+                      child: Icon(
+                        Icons.person,
+                        color: AppColors.white,
+                        size: AppSpacing.s18,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.s12),
               // Search Bar
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 0),
+                padding: AppSpacing.symmetric(horizontal: 0),
                 child: CustomSearchBar(
                   controller: _searchController,
                   focusNode: _searchFocusNode,
@@ -213,18 +222,20 @@ class _MapSearchOverlayState extends State<MapSearchOverlay> {
               ),
               if (showResultsPanel) ...[
                 Container(
-                  constraints: const BoxConstraints(maxHeight: 300),
+                  constraints: const BoxConstraints(maxHeight: AppSpacing.s300),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(16),
+                      bottomLeft: Radius.circular(AppSpacing.r16),
+                      bottomRight: Radius.circular(AppSpacing.r16),
                     ),
-                    border: Border.all(color: const Color(0x1400897B)),
+                    border: Border.all(
+                      color: AppColors.withAlpha(AppColors.primary, 0.08),
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 18,
+                        color: AppColors.withAlpha(AppColors.black, 0.1),
+                        blurRadius: AppSpacing.s18,
                         offset: const Offset(0, 8),
                       ),
                     ],
@@ -234,20 +245,24 @@ class _MapSearchOverlayState extends State<MapSearchOverlay> {
                     children: [
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+                        padding: AppSpacing.fromLTRB(
+                          AppSpacing.s14,
+                          AppSpacing.s12,
+                          AppSpacing.s14,
+                          AppSpacing.s10,
+                        ),
                         decoration: const BoxDecoration(
-                          color: Color(0xFFF2F7F7),
+                          color: AppColors.primarySoft,
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16),
-                            topRight: Radius.circular(16),
+                            topLeft: Radius.circular(AppSpacing.r16),
+                            topRight: Radius.circular(AppSpacing.r16),
                           ),
                         ),
                         child: Text(
                           '${widget.stations.length} ${loc.get('station')}',
-                          style: const TextStyle(
-                            fontSize: 13,
+                          style: AppTextStyles.body.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF235A56),
+                            color: AppColors.primary,
                           ),
                         ),
                       ),
@@ -255,22 +270,21 @@ class _MapSearchOverlayState extends State<MapSearchOverlay> {
                         child: widget.stations.isEmpty
                             ? Center(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: AppSpacing.all(AppSpacing.md),
                                   child: Text(
                                     loc.get('noStationsAvailable'),
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Color(0xFF6A757C),
+                                    style: AppTextStyles.body.copyWith(
+                                      color: AppColors.textSecondary,
                                     ),
                                   ),
                                 ),
                               )
                             : ListView.separated(
-                                padding: const EdgeInsets.all(10),
+                                padding: AppSpacing.all(AppSpacing.s10),
                                 itemCount: widget.stations.length,
                                 separatorBuilder: (_, _) =>
-                                    const SizedBox(height: 8),
+                                    const SizedBox(height: AppSpacing.sm),
                                 itemBuilder: (context, index) {
                                   final station = widget.stations[index];
                                   return _buildStationResultItem(

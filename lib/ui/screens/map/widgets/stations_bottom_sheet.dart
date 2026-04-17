@@ -4,6 +4,9 @@ import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/core/utils/distance_calculator.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
 import 'package:velo_pp/ui/screens/station/station_screen.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
 
 class StationsBottomSheet extends StatelessWidget {
   final List<Station> stations;
@@ -30,40 +33,41 @@ class StationsBottomSheet extends StatelessWidget {
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(AppSpacing.r20),
+          topRight: Radius.circular(AppSpacing.r20),
         ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.s12),
           Container(
-            width: 40,
-            height: 5,
+            width: AppSpacing.s40,
+            height: AppSpacing.s5,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2.5),
+              color: AppColors.gray300,
+              borderRadius: BorderRadius.circular(AppSpacing.r2),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: AppSpacing.symmetric(horizontal: AppSpacing.md),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.pedal_bike, color: Colors.teal, size: 24),
-                    const SizedBox(width: 8),
+                    const Icon(
+                      Icons.pedal_bike,
+                      color: AppColors.primary,
+                      size: AppSpacing.lg,
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
                     Text(
                       '${stations.length} ${loc.get('available')}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppTextStyles.title,
                     ),
                   ],
                 ),
@@ -74,12 +78,12 @@ class StationsBottomSheet extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.s12),
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: AppSpacing.symmetric(horizontal: AppSpacing.s12),
               itemCount: stations.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 8),
+              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
               itemBuilder: (context, index) {
                 final station = stations[index];
                 final isSelected = selectedStation?.name == station.name;
@@ -102,7 +106,7 @@ class StationsBottomSheet extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.s12),
         ],
       ),
     );
@@ -121,49 +125,55 @@ class StationsBottomSheet extends StatelessWidget {
     final distanceKm = CustomDistanceCalculator.formatDistance(distance);
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: AppSpacing.all(AppSpacing.s12),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.teal[50] : Colors.grey[50],
-        border: Border.all(color: isSelected ? Colors.teal : Colors.grey[200]!),
-        borderRadius: BorderRadius.circular(8),
+        color: isSelected ? AppColors.primaryLight : AppColors.gray50,
+        border: Border.all(
+          color: isSelected ? AppColors.primary : AppColors.gray200,
+        ),
+        borderRadius: BorderRadius.circular(AppSpacing.r8),
       ),
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: AppSpacing.s40,
+            height: AppSpacing.s40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.teal[100],
+              color: AppColors.primaryLight,
             ),
-            child: const Icon(Icons.pedal_bike, color: Colors.teal, size: 20),
+            child: const Icon(
+              Icons.pedal_bike,
+              color: AppColors.primary,
+              size: AppSpacing.s20,
+            ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.s12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   station.name,
-                  style: const TextStyle(
+                  style: AppTextStyles.body.copyWith(
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 Text(
                   '${station.bikes} ${loc.get('bikes')} • $availableSlots ${loc.get('slots')} • ${station.address}',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  style: AppTextStyles.caption.copyWith(
+                    color: AppColors.gray600,
+                  ),
                 ),
               ],
             ),
           ),
           Text(
             '$distanceKm ${loc.get('km')}',
-            style: TextStyle(
+            style: AppTextStyles.body.copyWith(
               fontWeight: FontWeight.w600,
-              fontSize: 13,
-              color: Colors.grey[700],
+              color: AppColors.gray700,
             ),
           ),
         ],

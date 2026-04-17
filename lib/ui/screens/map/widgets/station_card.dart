@@ -3,6 +3,9 @@ import 'package:latlong2/latlong.dart' show LatLng;
 import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/core/utils/distance_calculator.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
 
 class StationCard extends StatelessWidget {
   final Station station;
@@ -28,51 +31,55 @@ class StationCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: AppSpacing.all(AppSpacing.s12),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.teal[50] : Colors.grey[50],
+          color: isSelected ? AppColors.primaryLight : AppColors.gray50,
           border: Border.all(
-            color: isSelected ? Colors.teal : Colors.grey[200]!,
+            color: isSelected ? AppColors.primary : AppColors.gray200,
           ),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppSpacing.r8),
         ),
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: AppSpacing.s40,
+              height: AppSpacing.s40,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.teal[100],
+                color: AppColors.primaryLight,
               ),
-              child: const Icon(Icons.pedal_bike, color: Colors.teal, size: 20),
+              child: const Icon(
+                Icons.pedal_bike,
+                color: AppColors.primary,
+                size: AppSpacing.s20,
+              ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.s12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     station.name,
-                    style: const TextStyle(
+                    style: AppTextStyles.body.copyWith(
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   Text(
                     '${station.bikes} ${loc.get('bikes')} • ${station.address}',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.gray600,
+                    ),
                   ),
                 ],
               ),
             ),
             Text(
               '${CustomDistanceCalculator.formatDistance(distance)} ${loc.get('km')}',
-              style: TextStyle(
+              style: AppTextStyles.body.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: 13,
-                color: Colors.grey[700],
+                color: AppColors.gray700,
               ),
             ),
           ],

@@ -9,6 +9,6 @@ abstract class PassesRepository extends ChangeNotifier {
 
   List<UserPass> getAllUserPasses(String userId);
 
-  Future<UserPass> purchasePass(String userId, String passId, bool duration);
+  Future<UserPass> purchasePass(String userId, String passId);
  
 }

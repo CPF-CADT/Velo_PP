@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:velo_pp/core/utils/async_value.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
 import 'package:velo_pp/ui/screens/rides/view_model/rides_view_model.dart';
 
@@ -26,13 +29,20 @@ class RideContent extends StatelessWidget {
     if (data.isEmpty) {
       return SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          padding: AppSpacing.symmetric(
+            horizontal: AppSpacing.s20,
+            vertical: AppSpacing.lg,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
-              Icon(Icons.directions_bike, size: 92, color: Colors.grey[300]),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.s40),
+              const Icon(
+                Icons.directions_bike,
+                size: AppSpacing.s92,
+                color: AppColors.gray300,
+              ),
+              const SizedBox(height: AppSpacing.s20),
               Text(
                 loc.get('yourRides'),
                 style: theme.textTheme.headlineSmall?.copyWith(
@@ -44,11 +54,11 @@ class RideContent extends StatelessWidget {
               Text(
                 loc.get('noRidesYet'),
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.gray600,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
               const _SummaryCard(totalRides: 0),
             ],
           ),
@@ -60,7 +70,12 @@ class RideContent extends StatelessWidget {
       child: CustomScrollView(
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            padding: AppSpacing.fromLTRB(
+              AppSpacing.s20,
+              AppSpacing.s20,
+              AppSpacing.s20,
+              AppSpacing.s12,
+            ),
             sliver: SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,12 +90,12 @@ class RideContent extends StatelessWidget {
                   Text(
                     'Track your recent trips and status',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
+                      color: AppColors.gray600,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.md),
                   _SummaryCard(totalRides: data.length),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppSpacing.s20),
                   Text(
                     'Recent rides',
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -92,12 +107,17 @@ class RideContent extends StatelessWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            padding: AppSpacing.fromLTRB(
+              AppSpacing.s20,
+              0,
+              AppSpacing.s20,
+              AppSpacing.s20,
+            ),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 final summary = data[index];
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+                  padding: AppSpacing.only(bottom: AppSpacing.s12),
                   child: _RideCard(
                     bikeName: summary.bike?.model ?? loc.get('bike'),
                     startStation: summary.startStation?.name ?? '-',
@@ -146,11 +166,11 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.all(AppSpacing.md),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: LinearGradient(
-          colors: [Colors.teal.shade600, Colors.teal.shade400],
+        borderRadius: BorderRadius.circular(AppSpacing.r18),
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.secondary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -158,15 +178,15 @@ class _SummaryCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            height: 44,
-            width: 44,
+            height: AppSpacing.s44,
+            width: AppSpacing.s44,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(14),
+              color: AppColors.withAlpha(AppColors.white, 0.2),
+              borderRadius: BorderRadius.circular(AppSpacing.r14),
             ),
-            child: const Icon(Icons.route, color: Colors.white),
+            child: const Icon(Icons.route, color: AppColors.white),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.s12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,21 +194,24 @@ class _SummaryCard extends StatelessWidget {
                 Text(
                   'Total rides',
                   style: theme.textTheme.labelLarge?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.8),
+                    color: AppColors.withAlpha(AppColors.white, 0.8),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 Text(
                   '$totalRides',
                   style: theme.textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
           ),
-          Icon(Icons.chevron_right, color: Colors.white.withValues(alpha: 0.7)),
+          Icon(
+            Icons.chevron_right,
+            color: AppColors.withAlpha(AppColors.white, 0.7),
+          ),
         ],
       ),
     );
@@ -218,15 +241,15 @@ class _RideCard extends StatelessWidget {
     final isActive = status.toLowerCase() == 'active';
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: AppSpacing.all(AppSpacing.s14),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+        borderRadius: BorderRadius.circular(AppSpacing.r16),
+        border: Border.all(color: AppColors.withAlpha(AppColors.gray500, 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12,
+            color: AppColors.withAlpha(AppColors.black, 0.04),
+            blurRadius: AppSpacing.s12,
             offset: const Offset(0, 6),
           ),
         ],
@@ -240,12 +263,12 @@ class _RideCard extends StatelessWidget {
                 height: 40,
                 width: 40,
                 decoration: BoxDecoration(
-                  color: Colors.teal.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
+                  color: AppColors.withAlpha(AppColors.primary, 0.12),
+                  borderRadius: BorderRadius.circular(AppSpacing.s12),
                 ),
-                child: const Icon(Icons.pedal_bike, color: Colors.teal),
+                child: const Icon(Icons.pedal_bike, color: AppColors.primary),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: AppSpacing.s12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,11 +279,11 @@ class _RideCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.xs),
                     Text(
                       isActive ? startStation : '$startStation -> $endStation',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600],
+                        color: AppColors.gray600,
                       ),
                     ),
                   ],
@@ -269,18 +292,18 @@ class _RideCard extends StatelessWidget {
               _buildStatusChip(status),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.s12),
           Row(
             children: [
               _InfoPill(icon: Icons.place, label: startStation),
               if (!isActive) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 _InfoPill(icon: Icons.flag, label: endStation),
               ],
             ],
           ),
           if (onReturnBike != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.s12),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -307,25 +330,31 @@ class _RideCard extends StatelessWidget {
 
     switch (normalized) {
       case 'active':
-        color = Colors.teal;
+        color = AppColors.primary;
         break;
       case 'completed':
-        color = Colors.grey;
+        color = AppColors.gray500;
         break;
       default:
-        color = Colors.orange;
+        color = AppColors.secondary;
         break;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: AppSpacing.symmetric(
+        horizontal: AppSpacing.s10,
+        vertical: AppSpacing.s6,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(AppSpacing.pill),
       ),
       child: Text(
         status,
-        style: TextStyle(color: color, fontWeight: FontWeight.w600),
+        style: AppTextStyles.caption.copyWith(
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -341,22 +370,25 @@ class _InfoPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: AppSpacing.symmetric(
+          horizontal: AppSpacing.s10,
+          vertical: AppSpacing.sm,
+        ),
         decoration: BoxDecoration(
-          color: Colors.grey.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.withAlpha(AppColors.gray500, 0.08),
+          borderRadius: BorderRadius.circular(AppSpacing.s12),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 16, color: Colors.grey[600]),
-            const SizedBox(width: 6),
+            Icon(icon, size: AppSpacing.md, color: AppColors.gray600),
+            const SizedBox(width: AppSpacing.s6),
             Flexible(
               child: Text(
                 label,
                 style: Theme.of(
                   context,
-                ).textTheme.labelMedium?.copyWith(color: Colors.grey[700]),
+                ).textTheme.labelMedium?.copyWith(color: AppColors.gray700),
                 overflow: TextOverflow.ellipsis,
               ),
             ),

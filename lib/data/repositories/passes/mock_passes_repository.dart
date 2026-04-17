@@ -39,7 +39,7 @@ class MockPassesRepository extends ChangeNotifier implements PassesRepository {
   }
   // purchase method
   @override
- Future<UserPass> purchasePass(String userId, String passId, bool duration) async{
+ Future<UserPass> purchasePass(String userId, String passId) async{
     await Future.delayed(const Duration(milliseconds: 1500));
 
     final pass = getPassById(passId);
@@ -52,7 +52,7 @@ class MockPassesRepository extends ChangeNotifier implements PassesRepository {
     DateTime newEndDate = DateTime.now().add(Duration(hours: pass.durationHours));
     if(  activePassIndex != -1){
       final oldPass = _userPasses[activePassIndex];  
-      if(duration && !oldPass.endDate.isBefore(DateTime.now())){  // check end date on old pass is still valid or not 
+      if(!oldPass.endDate.isBefore(DateTime.now())){  // check end date on old pass is still valid or not 
         newEndDate = oldPass.endDate.add(Duration(hours: pass.durationHours));
       }
       _userPasses[activePassIndex]  =

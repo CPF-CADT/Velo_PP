@@ -3,6 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:velo_pp/ui/screens/station/view_model/station_view_model.dart';
 import 'package:velo_pp/ui/screens/station/widgets/slots_grid.dart';
 import 'package:velo_pp/core/utils/async_value.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
 import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
 
@@ -41,12 +44,12 @@ class _StationContentState extends State<StationContent> {
           return Scaffold(
             appBar: AppBar(
               title: Text(widget.station.name),
-              backgroundColor: Colors.teal,
+              backgroundColor: AppColors.primary,
               centerTitle: true,
               elevation: 0,
             ),
             body: const Center(
-              child: CircularProgressIndicator(color: Colors.teal),
+              child: CircularProgressIndicator(color: AppColors.primary),
             ),
           );
         }
@@ -55,7 +58,7 @@ class _StationContentState extends State<StationContent> {
           return Scaffold(
             appBar: AppBar(
               title: Text(widget.station.name),
-              backgroundColor: Colors.teal,
+              backgroundColor: AppColors.primary,
               centerTitle: true,
               elevation: 0,
             ),
@@ -63,13 +66,17 @@ class _StationContentState extends State<StationContent> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  const SizedBox(height: 16),
+                  const Icon(
+                    Icons.error_outline,
+                    size: AppSpacing.s48,
+                    color: AppColors.error,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
                   Text(
                     '${loc.get('error')}: ${viewModel.slots.error}',
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSpacing.md),
                   ElevatedButton(
                     onPressed: () => viewModel.loadSlots(widget.station.id),
                     child: Text(loc.get('retry')),
@@ -96,48 +103,47 @@ class _StationContentState extends State<StationContent> {
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.station.name),
-            backgroundColor: Colors.teal,
+            backgroundColor: AppColors.primary,
             centerTitle: true,
             elevation: 0,
           ),
           body: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   widget.station.name,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextStyles.headingLarge,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 Text(
                   hasActiveRide
                       ? 'You already have an active ride. Return it before booking another bike.'
                       : 'Select one occupied slot to book a bike.',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  style: AppTextStyles.body.copyWith(color: AppColors.gray600),
                 ),
                 if (hasActiveRide) ...[
-                  const SizedBox(height: 10),
+                  const SizedBox(height: AppSpacing.s10),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(10),
+                    padding: AppSpacing.all(AppSpacing.s10),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.withAlpha(AppColors.secondary, 0.12),
+                      borderRadius: BorderRadius.circular(AppSpacing.r10),
                       border: Border.all(
-                        color: Colors.orange.withValues(alpha: 0.35),
+                        color: AppColors.withAlpha(AppColors.secondary, 0.35),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Booking is locked until your current ride is returned.',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: AppTextStyles.body.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
-                const SizedBox(height: 20),
+                const SizedBox(height: AppSpacing.s20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -148,20 +154,18 @@ class _StationContentState extends State<StationContent> {
                           children: [
                             Text(
                               'Bike Occupied',
-                              style: TextStyle(
-                                fontSize: 14,
+                              style: AppTextStyles.body.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: Colors.grey[700],
+                                color: AppColors.gray700,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           '$occupiedSlots ${loc.get('bikes')}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.gray500,
                           ),
                         ),
                       ],
@@ -171,25 +175,23 @@ class _StationContentState extends State<StationContent> {
                       children: [
                         Text(
                           'Available Slots',
-                          style: TextStyle(
-                            fontSize: 14,
+                          style: AppTextStyles.body.copyWith(
                             fontWeight: FontWeight.w600,
-                            color: Colors.teal,
+                            color: AppColors.primary,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           '$availableSlots ${loc.get('slots')}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.gray500,
                           ),
                         ),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: AppSpacing.s20),
                 Expanded(
                   child: SlotsGrid(
                     slots: slots,
@@ -205,24 +207,26 @@ class _StationContentState extends State<StationContent> {
                         : (dockId) => viewModel.selectDock(dockId),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.s12),
                 if (selectedDock != null)
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(12),
+                    padding: AppSpacing.all(AppSpacing.s12),
                     decoration: BoxDecoration(
-                      color: Colors.teal.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.withAlpha(AppColors.primary, 0.08),
+                      borderRadius: BorderRadius.circular(AppSpacing.r10),
                       border: Border.all(
-                        color: Colors.teal.withValues(alpha: 0.25),
+                        color: AppColors.withAlpha(AppColors.primary, 0.25),
                       ),
                     ),
                     child: Text(
                       'Selected: Slot ${selectedDock.slotNumber} - Bike $selectedBikeModel',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: AppTextStyles.body.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.s12),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
@@ -358,54 +362,59 @@ class _StationContentState extends State<StationContent> {
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(AppSpacing.r20),
+          topRight: Radius.circular(AppSpacing.r20),
         ),
       ),
       builder: (context) {
         return SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+            padding: AppSpacing.fromLTRB(
+              AppSpacing.s20,
+              AppSpacing.s20,
+              AppSpacing.s20,
+              AppSpacing.lg,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Single Ticket Payment',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: AppTextStyles.title,
                 ),
-                const SizedBox(height: 10),
-                const Text(
+                const SizedBox(height: AppSpacing.s10),
+                Text(
                   'Complete payment before booking this bike.',
-                  style: TextStyle(color: Colors.black54),
+                  style: AppTextStyles.body.copyWith(color: AppColors.gray700),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(12),
+                  padding: AppSpacing.all(AppSpacing.s12),
                   decoration: BoxDecoration(
-                    color: Colors.teal.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.withAlpha(AppColors.primary, 0.08),
+                    borderRadius: BorderRadius.circular(AppSpacing.r10),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Single Ticket',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: AppTextStyles.body,
                       ),
                       Text(
                         'Pay \$1',
-                        style: TextStyle(
+                        style: AppTextStyles.body.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: Colors.teal,
+                          color: AppColors.primary,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -413,7 +422,7 @@ class _StationContentState extends State<StationContent> {
                     child: const Text('Confirm Payment'),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 SizedBox(
                   width: double.infinity,
                   child: TextButton(
