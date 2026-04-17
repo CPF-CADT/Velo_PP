@@ -5,16 +5,18 @@ class PassDto {
   final String name;
   final double price;
   final int durationHours;
+  final List<String> features;
 
   const PassDto({
     required this.id,
     required this.name,
     required this.price,
     required this.durationHours,
+    required this.features,
   });
 
   Pass toModel() {
-    return Pass(id: id, name: name, price: price, durationHours: durationHours);
+    return Pass(id: id, name: name, price: price, durationHours: durationHours, features: features);
   }
 
   factory PassDto.fromModel(Pass pass) {
@@ -23,6 +25,7 @@ class PassDto {
       name: pass.name,
       price: pass.price,
       durationHours: pass.durationHours,
+      features: pass.features,
     );
   }
 
@@ -32,6 +35,7 @@ class PassDto {
       'name': name,
       'price': price,
       'duration_hours': durationHours,
+      'features': features,
     };
   }
 
@@ -41,6 +45,7 @@ class PassDto {
       name: map['name'] ?? '',
       price: (map['price'] ?? 0).toDouble(),
       durationHours: map['duration_hours'] ?? map['durationHours'] ?? 0,
+      features: List<String>.from(map['features'] ?? []),
     );
   }
 }

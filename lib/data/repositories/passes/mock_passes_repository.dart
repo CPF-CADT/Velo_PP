@@ -7,8 +7,9 @@ import 'package:velo_pp/model/pass.dart';
 import 'package:velo_pp/model/user_pass.dart';
 
 class MockPassesRepository extends ChangeNotifier implements PassesRepository {
-  final List<PassDto> _passes = List<PassDto>.from(MockData.passes);
-  final List<UserPassDto> _userPasses = List<UserPassDto>.from(
+  int _passCounter = 1;  // couter id
+  final List<PassDto> _passes = List<PassDto>.from(MockData.passes); //copy list of pass
+  final List<UserPassDto> _userPasses = List<UserPassDto>.from(   // copy list of userPass for modified
     MockData.userPasses,
   );
 
@@ -27,5 +28,50 @@ class MockPassesRepository extends ChangeNotifier implements PassesRepository {
         .where((item) => item.userId == userId && item.isActive)
         .toList();
     return active.isEmpty ? null : active.first.toModel();
+  }
+  // get list all User Passes
+  @override
+   List<UserPass> getAllUserPasses(String userId) {
+    return _userPasses
+        .where((item) => item.userId == userId)
+        .map((dto) => dto.toModel())
+        .toList();
+  }
+  // purchase method
+  @override
+ Future<UserPass> purchasePass(String userId, String passId) async{
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    final pass = getPassById(passId);
+    if(pass == null){
+      throw Exception("pass not found");
+
+    }
+    // detivate old active pass
+    final activePassIndex = _userPasses.indexWhere((item) => item.userId == userId && item.isActive);
+    
+    if(activePassIndex != -1){
+      final oldPass = _userPasses[activePassIndex];
+      _userPasses[activePassIndex]  =
+       UserPassDto(id: oldPass.id, 
+       userId: oldPass.userId,
+        passId: oldPass.passId, 
+        startDate: oldPass.startDate, 
+        endDate: oldPass.endDate, 
+        isActive: false);
+    }
+
+    //create new pass
+    final newUserPassDto = UserPassDto(
+      id: 'userpass_${_passCounter++}',  // update the new id with couter 
+      userId: userId, 
+      passId: passId,
+      startDate: DateTime.now(),
+      endDate: DateTime.now().add(Duration(hours: pass.durationHours)),
+      isActive: true, 
+    );
+    _userPasses.add(newUserPassDto);
+    
+    return newUserPassDto.toModel();
   }
 }
