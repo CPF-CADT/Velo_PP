@@ -66,7 +66,7 @@ class PassesViewModel extends ChangeNotifier {
 
     try{
       final user = _authRepository.currentUser;
-      await _passesRepository.purchasePass(user.id, passId, addDuration);  // create new pass
+      await _passesRepository.purchasePass(user.id, passId);  // create new pass
 
       await loadPasses();  // refresh the data to show new pass 
 
