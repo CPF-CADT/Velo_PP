@@ -25,17 +25,25 @@ class MapViewModel extends ChangeNotifier {
        _stationsRepository = stationsRepository,
        _dockRepository = dockRepository;
 
-  bool get hasActiveRide {
+  Future<bool> get hasActiveRide {
     return _bookingsRepository.hasActiveBookingForUser(
       _authRepository.currentUser.id,
     );
   }
 
   bool shouldShowStation(Station station) {
-    if (hasActiveRide) {
+    // Show station if it has bikes available (for starting rides)
+    // OR if it has available slots (for ending rides)
+    final hasAvailableSlots = getAvailableSlotsForStation(station.id) > 0;
+    return station.bikesAvailable > 0 || hasAvailableSlots;
+  }
+
+  Future<bool> shouldShowStationForActiveRide(Station station) async {
+    final hasActive = await hasActiveRide;
+    if (hasActive) {
       return getAvailableSlotsForStation(station.id) > 0;
     }
-    return station.bikesAvailable > 0;
+    return false;
   }
 
   int getAvailableSlotsForStation(String stationId) {

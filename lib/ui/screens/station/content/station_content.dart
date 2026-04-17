@@ -98,7 +98,6 @@ class _StationContentState extends State<StationContent> {
         final selectedBikeModel = selectedDock == null
             ? null
             : viewModel.getBikeModel(selectedDock.bikeId);
-        final hasActiveRide = viewModel.hasActiveRide;
 
         return Scaffold(
           appBar: AppBar(
@@ -107,9 +106,13 @@ class _StationContentState extends State<StationContent> {
             centerTitle: true,
             elevation: 0,
           ),
-          body: Padding(
-            padding: AppSpacing.all(AppSpacing.md),
-            child: Column(
+          body: FutureBuilder<bool>(
+            future: viewModel.getHasActiveRide(),
+            builder: (context, snapshot) {
+              final hasActiveRide = snapshot.data ?? false;
+              return Padding(
+                padding: AppSpacing.all(AppSpacing.md),
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -204,7 +207,7 @@ class _StationContentState extends State<StationContent> {
                               _bookBikeFromDismiss(context, viewModel, dockId),
                     onSlotTap: hasActiveRide
                         ? (_) {}
-                        : (dockId) => viewModel.selectDock(dockId),
+                        : (dockId) async => await viewModel.selectDock(dockId),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.s12),
@@ -250,6 +253,8 @@ class _StationContentState extends State<StationContent> {
                 ),
               ],
             ),
+              );
+            },
           ),
         );
       },

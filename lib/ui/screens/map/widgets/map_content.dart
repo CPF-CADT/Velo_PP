@@ -452,47 +452,53 @@ class _MapContentState extends State<MapContent> {
   Widget _buildActionButton(List<Station> stations) {
     final loc = AppLocalizations.of(context);
     final viewModel = context.watch<MapViewModel>();
-    final isReturnMode = viewModel.hasActiveRide;
 
-    return Positioned(
-      bottom: isReturnMode ? 92 : 20,
-      right: 20,
-      child: GestureDetector(
-        onTap: isReturnMode
-            ? widget.onQuickReturnTap
-            : () => _openNearestStationSlotSelection(stations),
-        onLongPress: isReturnMode
-            ? null
-            : () => _showStationsBottomSheet(stations),
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.primary,
-            borderRadius: BorderRadius.circular(AppSpacing.s12),
-          ),
-          padding: AppSpacing.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                isReturnMode ? Icons.assignment_return : Icons.near_me,
-                color: AppColors.white,
-                size: AppSpacing.lg,
+    return FutureBuilder<bool>(
+      future: viewModel.hasActiveRide,
+      builder: (context, snapshot) {
+        final isReturnMode = snapshot.data ?? false;
+        
+        return Positioned(
+          bottom: isReturnMode ? 92 : 20,
+          right: 20,
+          child: GestureDetector(
+            onTap: isReturnMode
+                ? widget.onQuickReturnTap
+                : () => _openNearestStationSlotSelection(stations),
+            onLongPress: isReturnMode
+                ? null
+                : () => _showStationsBottomSheet(stations),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(AppSpacing.s12),
               ),
-              const SizedBox(width: AppSpacing.s12),
-              Text(
-                isReturnMode ? 'Quick Return' : loc.get('quickSelect'),
-                style: AppTextStyles.body.copyWith(
-                  color: AppColors.white,
-                  fontWeight: FontWeight.w700,
-                ),
+              padding: AppSpacing.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
               ),
-            ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isReturnMode ? Icons.assignment_return : Icons.near_me,
+                    color: AppColors.white,
+                    size: AppSpacing.lg,
+                  ),
+                  const SizedBox(width: AppSpacing.s12),
+                  Text(
+                    isReturnMode ? 'Quick Return' : loc.get('quickSelect'),
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -517,43 +523,50 @@ class _MapContentState extends State<MapContent> {
 
   Widget _buildRideStatusBanner() {
     final viewModel = context.watch<MapViewModel>();
-    if (!viewModel.hasActiveRide) {
-      return const SizedBox.shrink();
-    }
+    
+    return FutureBuilder<bool>(
+      future: viewModel.hasActiveRide,
+      builder: (context, snapshot) {
+        final hasActive = snapshot.data ?? false;
+        if (!hasActive) {
+          return const SizedBox.shrink();
+        }
 
-    return Positioned(
-      left: 12,
-      right: 12,
-      bottom: 20,
-      child: Container(
-        padding: AppSpacing.symmetric(
-          horizontal: AppSpacing.s14,
-          vertical: AppSpacing.s10,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.withAlpha(AppColors.secondary, 0.95),
-          borderRadius: BorderRadius.circular(AppSpacing.s12),
-        ),
-        child: Row(
-          children: [
-            const Icon(
-              Icons.pedal_bike,
-              color: AppColors.white,
-              size: AppSpacing.s18,
+        return Positioned(
+          left: 12,
+          right: 12,
+          bottom: 20,
+          child: Container(
+            padding: AppSpacing.symmetric(
+              horizontal: AppSpacing.s14,
+              vertical: AppSpacing.s10,
             ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Text(
-                'You are currently holding a bike. Return it before booking another one.',
-                style: AppTextStyles.body.copyWith(
+            decoration: BoxDecoration(
+              color: AppColors.withAlpha(AppColors.secondary, 0.95),
+              borderRadius: BorderRadius.circular(AppSpacing.s12),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.pedal_bike,
                   color: AppColors.white,
-                  fontWeight: FontWeight.w600,
+                  size: AppSpacing.s18,
                 ),
-              ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'You are currently holding a bike. Return it before booking another one.',
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

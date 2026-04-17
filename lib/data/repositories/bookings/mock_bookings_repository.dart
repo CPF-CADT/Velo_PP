@@ -27,11 +27,11 @@ class MockBookingsRepository extends ChangeNotifier
   }) async {
     await Future.delayed(const Duration(milliseconds: 300));
 
-    if (hasActiveBookingForUser(userId)) {
+    if (await hasActiveBookingForUser(userId)) {
       throw Exception('You already have an active booking');
     }
 
-    if (hasActiveBookingForBike(bikeId)) {
+    if (await hasActiveBookingForBike(bikeId)) {
       throw Exception('This bike is already booked');
     }
 
@@ -54,14 +54,14 @@ class MockBookingsRepository extends ChangeNotifier
   }
 
   @override
-  bool hasActiveBookingForUser(String userId) {
+  Future<bool> hasActiveBookingForUser(String userId) async {
     return _bookings.any(
       (booking) => booking.userId == userId && _isActiveStatus(booking.status),
     );
   }
 
   @override
-  bool hasActiveBookingForBike(String bikeId) {
+  Future<bool> hasActiveBookingForBike(String bikeId) async {
     return _bookings.any(
       (booking) => booking.bikeId == bikeId && _isActiveStatus(booking.status),
     );

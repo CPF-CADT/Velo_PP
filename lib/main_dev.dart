@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:velo_pp/data/repositories/auth/auth_repository.dart';
 import 'package:velo_pp/data/repositories/auth/mock_auth_repository.dart';
@@ -42,7 +44,13 @@ List<InheritedProvider> get devProviders {
   ];
 }
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint('Firebase initialization error (expected in dev): $e');
+  }
   runDevApp();
 }
 

@@ -34,7 +34,8 @@ class StationViewModel extends ChangeNotifier {
 
   String? get selectedDockId => _selectedDockId;
   bool get isBooking => _isBooking;
-  bool get hasActiveRide {
+  
+  Future<bool> getHasActiveRide() {
     return _bookingsRepository.hasActiveBookingForUser(
       _authRepository.currentUser.id,
     );
@@ -102,8 +103,8 @@ class StationViewModel extends ChangeNotifier {
     }
   }
 
-  void selectDock(String dockId) {
-    if (hasActiveRide) {
+  Future<void> selectDock(String dockId) async {
+    if (await getHasActiveRide()) {
       return;
     }
 
@@ -133,7 +134,7 @@ class StationViewModel extends ChangeNotifier {
     if (_isBooking) {
       throw Exception('Booking in progress');
     }
-    if (hasActiveRide) {
+    if (await getHasActiveRide()) {
       throw Exception('You already have an active ride. Return it first.');
     }
 

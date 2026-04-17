@@ -13,6 +13,10 @@ class FirebaseBookingsRepository extends ChangeNotifier
 
   final FirebaseFirestore _firestore;
 
+  bool _isActiveStatus(String status) {
+    return status.trim().toLowerCase() == 'active';
+  }
+
   @override
   Future<List<Booking>> getBookingsForUser(String userId) async {
     final snapshot = await _firestore
@@ -34,24 +38,80 @@ class FirebaseBookingsRepository extends ChangeNotifier
     return BookingDto.fromMap({...doc.data()!, 'id': doc.id}).toModel();
   }
 
-  Future<void> createBooking({
+  @override
+  Future<Booking> createBooking({
     required String userId,
     required String bikeId,
     required String startStationId,
-    required String endStationId,
-    required DateTime timeToPickup,
-    required String status,
-    required String paymentMethod,
   }) async {
-    await _firestore.collection(_bookingsCollection).add({
+    if (await hasActiveBookingForUser(userId)) {
+      throw Exception('You already have an active booking');
+    }
+
+    if (await hasActiveBookingForBike(bikeId)) {
+      throw Exception('This bike is already booked');
+    }
+
+    final now = DateTime.now();
+    final docRef = await _firestore.collection(_bookingsCollection).add({
       'user_id': userId,
       'bike_id': bikeId,
       'start_station_id': startStationId,
+      'end_station_id': '',
+      'status': 'active',
+      'payment_method': 'wallet',
+      'time_to_pickup': now.add(const Duration(minutes: 15)).toIso8601String(),
+      'created_at': now.toIso8601String(),
+    });
+
+    final booking = Booking(
+      id: docRef.id,
+      userId: userId,
+      bikeId: bikeId,
+      startStationId: startStationId,
+      endStationId: '',
+      status: 'active',
+      paymentMethod: 'wallet',
+      timeToPickup: now.add(const Duration(minutes: 15)),
+      createdAt: now,
+    );
+
+    notifyListeners();
+    return booking;
+  }
+
+  @override
+  Future<bool> hasActiveBookingForUser(String userId) async {
+    final snapshot = await _firestore
+        .collection(_bookingsCollection)
+        .where('user_id', isEqualTo: userId)
+        .where('status', isEqualTo: 'active')
+        .limit(1)
+        .get();
+
+    return snapshot.docs.isNotEmpty;
+  }
+
+  @override
+  Future<bool> hasActiveBookingForBike(String bikeId) async {
+    final snapshot = await _firestore
+        .collection(_bookingsCollection)
+        .where('bike_id', isEqualTo: bikeId)
+        .where('status', isEqualTo: 'active')
+        .limit(1)
+        .get();
+
+    return snapshot.docs.isNotEmpty;
+  }
+
+  @override
+  Future<void> completeBooking({
+    required String bookingId,
+    required String endStationId,
+  }) async {
+    await _firestore.collection(_bookingsCollection).doc(bookingId).update({
+      'status': 'completed',
       'end_station_id': endStationId,
-      'time_to_pickup': timeToPickup.toIso8601String(),
-      'status': status,
-      'payment_method': paymentMethod,
-      'created_at': DateTime.now().toIso8601String(),
     });
     notifyListeners();
   }
@@ -59,13 +119,6 @@ class FirebaseBookingsRepository extends ChangeNotifier
   Future<void> updateBookingStatus(String bookingId, String status) async {
     await _firestore.collection(_bookingsCollection).doc(bookingId).update({
       'status': status,
-    });
-    notifyListeners();
-  }
-
-  Future<void> completeBooking(String bookingId) async {
-    await _firestore.collection(_bookingsCollection).doc(bookingId).update({
-      'status': 'completed',
     });
     notifyListeners();
   }
