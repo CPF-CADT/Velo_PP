@@ -111,7 +111,7 @@
       "bikeId": "bike_001",
       "startStationId": "st_eden",
       "endStationId": "st_central",
-      "status": "active",
+      "status": "completed",
       "paymentMethod": "wallet",
       "timeToPickup": "2026-04-17T00:15:00Z",
       "createdAt": "2026-04-17T00:05:00Z"

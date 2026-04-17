@@ -63,7 +63,9 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentTab = 1;
+  static const int _passesTabIndex = 0;
   static const int _mapTabIndex = 1;
+  static const int _ridesTabIndex = 2;
 
   void _openProfile() {
     Navigator.of(context).push(
@@ -71,6 +73,18 @@ class _MainScreenState extends State<MainScreen> {
         builder: (_) => ProfileScreen(onLocaleChange: widget.onLocaleChange),
       ),
     );
+  }
+
+  void _openRides() {
+    setState(() {
+      _currentTab = _ridesTabIndex;
+    });
+  }
+
+  void _openPasses() {
+    setState(() {
+      _currentTab = _passesTabIndex;
+    });
   }
 
   @override
@@ -87,7 +101,11 @@ class _MainScreenState extends State<MainScreen> {
               index: _currentTab,
               children: [
                 const PassesScreen(),
-                MapScreen(onProfileTap: _openProfile),
+                MapScreen(
+                  onProfileTap: _openProfile,
+                  onQuickReturnTap: _openRides,
+                  onOpenPassesTap: _openPasses,
+                ),
                 const RidesScreen(),
               ],
             ),

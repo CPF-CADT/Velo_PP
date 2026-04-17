@@ -154,7 +154,6 @@ class MockData {
   ];
 
   static final List<PassDto> passes = [
-    
     const PassDto(
       id: 'pass_day',
       name: 'Day Pass',
@@ -184,14 +183,14 @@ class MockData {
   ];
 
   static final List<UserPassDto> userPasses = [
-    UserPassDto(
-      id: 'up_001',
-      userId: 'user_001',
-      passId: 'pass_month',
-      startDate: DateTime.now().subtract(const Duration(days: 10)),
-      endDate: DateTime.now().add(const Duration(days: 20)),
-      isActive: true,
-    ),
+    // UserPassDto(
+    //   id: 'up_001',
+    //   userId: 'user_001',
+    //   passId: 'pass_month',
+    //   startDate: DateTime.now().subtract(const Duration(days: 10)),
+    //   endDate: DateTime.now().add(const Duration(days: 20)),
+    //   isActive: true,
+    // ),
   ];
 
   static final List<BookingDto> bookings = [
@@ -201,7 +200,7 @@ class MockData {
       bikeId: 'bike_001',
       startStationId: 'st_01',
       endStationId: 'st_02',
-      status: 'active',
+      status: 'completed',
       paymentMethod: 'wallet',
       timeToPickup: DateTime.now().add(const Duration(minutes: 15)),
       createdAt: DateTime.now().subtract(const Duration(minutes: 5)),

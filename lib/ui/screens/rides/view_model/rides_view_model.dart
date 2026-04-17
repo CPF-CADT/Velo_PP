@@ -41,6 +41,7 @@ class RidesViewModel extends ChangeNotifier {
   final DockRepository _dockRepository;
 
   final Set<String> _returningBookingIds = <String>{};
+  bool _isReloading = false;
 
   AsyncValue<List<RideSummary>> rides = AsyncValue.loading();
 
@@ -54,7 +55,21 @@ class RidesViewModel extends ChangeNotifier {
        _bookingsRepository = bookingsRepository,
        _stationsRepository = stationsRepository,
        _bikesRepository = bikesRepository,
-       _dockRepository = dockRepository;
+       _dockRepository = dockRepository {
+    _bookingsRepository.addListener(_onRepositoryChanged);
+    _bikesRepository.addListener(_onRepositoryChanged);
+    _stationsRepository.addListener(_onRepositoryChanged);
+  }
+
+  void _onRepositoryChanged() {
+    if (_isReloading) {
+      return;
+    }
+    _isReloading = true;
+    loadRides().whenComplete(() {
+      _isReloading = false;
+    });
+  }
 
   Future<void> loadRides() async {
     rides = AsyncValue.loading();
@@ -170,6 +185,14 @@ class RidesViewModel extends ChangeNotifier {
     }
 
     return null;
+  }
+
+  @override
+  void dispose() {
+    _bookingsRepository.removeListener(_onRepositoryChanged);
+    _bikesRepository.removeListener(_onRepositoryChanged);
+    _stationsRepository.removeListener(_onRepositoryChanged);
+    super.dispose();
   }
 }
 
