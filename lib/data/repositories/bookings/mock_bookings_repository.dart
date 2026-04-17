@@ -13,7 +13,7 @@ class MockBookingsRepository extends ChangeNotifier
   }
 
   @override
-  List<Booking> getBookingsForUser(String userId) {
+  Future<List<Booking>> getBookingsForUser(String userId) async {
     final list = _bookings.where((item) => item.userId == userId).toList();
     list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return list.map((booking) => booking.toModel()).toList();
