@@ -15,7 +15,7 @@ class MockStationGeographyService implements StationGeographyService {
   List<Station> generateStations(LatLng userLocation, AppLocalizations loc) {
     return [
       Station(
-        id: 'st_eden',
+        id: 'st_01',
         name: 'Eden Garden Station',
         location: LatLng(
           userLocation.latitude + 0.00045,
@@ -26,7 +26,7 @@ class MockStationGeographyService implements StationGeographyService {
         address: 'Eden Garden',
       ),
       Station(
-        id: 'st_central',
+        id: 'st_02',
         name: 'Central Market Station',
         location: LatLng(
           userLocation.latitude + 0.003,
@@ -37,7 +37,7 @@ class MockStationGeographyService implements StationGeographyService {
         address: 'Phsar Thmei',
       ),
       Station(
-        id: 'st_riverside',
+        id: 'st_03',
         name: 'Riverside Station',
         location: LatLng(
           userLocation.latitude + 0.001,
@@ -48,7 +48,7 @@ class MockStationGeographyService implements StationGeographyService {
         address: 'Sisowath Quay',
       ),
       Station(
-        id: 'st_university',
+        id: 'st_04',
         name: 'University Station',
         location: LatLng(
           userLocation.latitude - 0.004,
@@ -59,7 +59,7 @@ class MockStationGeographyService implements StationGeographyService {
         address: 'Russian Blvd',
       ),
       Station(
-        id: 'st_nightmarket',
+        id: 'st_05',
         name: 'Night Market Station',
         location: LatLng(
           userLocation.latitude - 0.001,
@@ -80,7 +80,7 @@ class RealStationGeographyService implements StationGeographyService {
   List<Station> generateStations(LatLng userLocation, AppLocalizations loc) {
     return [
       Station(
-        id: 'st_eden',
+        id: 'st_01',
         name: 'Eden Garden Station',
         location: const LatLng(11.5622, 104.9152),
         capacity: 12,
@@ -88,7 +88,7 @@ class RealStationGeographyService implements StationGeographyService {
         address: 'Eden Garden',
       ),
       Station(
-        id: 'st_central',
+        id: 'st_02',
         name: 'Central Market Station',
         location: const LatLng(11.5695, 104.9210),
         capacity: 16,
@@ -96,7 +96,7 @@ class RealStationGeographyService implements StationGeographyService {
         address: 'Phsar Thmei',
       ),
       Station(
-        id: 'st_riverside',
+        id: 'st_03',
         name: 'Riverside Station',
         location: const LatLng(11.5735, 104.9292),
         capacity: 10,
@@ -104,7 +104,7 @@ class RealStationGeographyService implements StationGeographyService {
         address: 'Sisowath Quay',
       ),
       Station(
-        id: 'st_university',
+        id: 'st_04',
         name: 'University Station',
         location: const LatLng(11.5529, 104.9166),
         capacity: 14,
@@ -112,7 +112,7 @@ class RealStationGeographyService implements StationGeographyService {
         address: 'Russian Blvd',
       ),
       Station(
-        id: 'st_nightmarket',
+        id: 'st_05',
         name: 'Night Market Station',
         location: const LatLng(11.5754, 104.9263),
         capacity: 8,

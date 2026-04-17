@@ -94,6 +94,7 @@ class AppLocalizations {
     'westdistrict': {'en': 'West District', 'km': 'លិច'},
     'station10': {'en': 'Station 10', 'km': 'ស្ថានីយ ១០'},
     'eastmarket': {'en': 'East Market', 'km': 'កើត'},
+    'total': {'en': 'Total', 'km': 'សរុប'},
   };
 
   String get(String key) {

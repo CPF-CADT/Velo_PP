@@ -22,7 +22,6 @@ class StationContent extends StatelessWidget {
 
     return Consumer<StationViewModel>(
       builder: (context, viewModel, _) {
-        // Load slots on first build
         if (viewModel.slots.state == AsyncValueState.loading) {
           Future.microtask(() => viewModel.loadSlots(stationId));
         }
@@ -75,10 +74,12 @@ class StationContent extends StatelessWidget {
         }
 
         final slots = viewModel.slots.data ?? [];
+        final availableSlots = slots.where((slot) => slot.status == 'available').length;
+        final occupiedSlots = slots.where((slot) => slot.status == 'occupied').length;
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(stationName),
+            title: const Text("Station"),
             backgroundColor: Colors.teal,
             centerTitle: true,
             elevation: 0,
@@ -88,14 +89,76 @@ class StationContent extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Header section
                 Text(
-                  loc.get('availableSlots'),
+                  'Current Selection',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  stationName,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
+                
+                // Live Dock Status section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Bike Occupied',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '$occupiedSlots ${loc.get('bikes')}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Available Slots',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.teal,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '$availableSlots ${loc.get('slots')}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                
+                // Slots list
                 Expanded(
                   child: SlotsGrid(
                     slots: slots,
