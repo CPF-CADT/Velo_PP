@@ -10,6 +10,7 @@ import 'package:velo_pp/data/repositories/passes/mock_passes_repository.dart';
 import 'package:velo_pp/data/repositories/stations/stations_repository.dart';
 import 'package:velo_pp/data/repositories/stations/mock_stations_repository.dart';
 import 'package:velo_pp/main_common.dart';
+import 'package:velo_pp/services/station_service.dart';
 import 'package:velo_pp/ui/states/app_settings_state.dart';
 
 /// Configure provider dependencies for dev environment.
@@ -19,6 +20,9 @@ List<InheritedProvider> get devProviders {
     ChangeNotifierProvider<AuthRepository>(create: (_) => MockAuthRepository()),
     ChangeNotifierProvider<StationsRepository>(
       create: (_) => MockStationsRepository(),
+    ),
+    Provider<StationGeographyService>(
+      create: (_) => const MockStationGeographyService(),
     ),
     ChangeNotifierProvider<BikesRepository>(
       create: (_) => MockBikesRepository(),

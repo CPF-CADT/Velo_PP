@@ -9,11 +9,13 @@ import 'package:velo_pp/l10n/app_localizations.dart';
 class StationModal extends StatelessWidget {
   final Station station;
   final LatLng userLocation;
+  final VoidCallback? onSelect;
 
   const StationModal({
     super.key,
     required this.station,
     required this.userLocation,
+    this.onSelect,
   });
 
   @override
@@ -93,6 +95,11 @@ class StationModal extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.pop(context);
+                if (onSelect != null) {
+                  onSelect!();
+                  return;
+                }
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -103,7 +110,7 @@ class StationModal extends StatelessWidget {
                 );
               },
               child: Text(
-                loc.get('navigate'),
+                loc.get('select'),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
