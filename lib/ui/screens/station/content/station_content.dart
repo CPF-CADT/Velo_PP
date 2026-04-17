@@ -4,16 +4,15 @@ import 'package:velo_pp/ui/screens/station/view_model/station_view_model.dart';
 import 'package:velo_pp/ui/screens/station/widgets/slots_grid.dart';
 import 'package:velo_pp/core/utils/async_value.dart';
 import 'package:velo_pp/model/dock.dart';
+import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
 
 class StationContent extends StatefulWidget {
-  final String stationId;
-  final String stationName;
+  final Station station;
 
   const StationContent({
     super.key,
-    required this.stationId,
-    required this.stationName,
+    required this.station,
   });
 
   @override
@@ -30,13 +29,13 @@ class _StationContentState extends State<StationContent> {
     return Consumer<StationViewModel>(
       builder: (context, viewModel, _) {
         if (viewModel.slots.state == AsyncValueState.loading) {
-          Future.microtask(() => viewModel.loadSlots(widget.stationId));
+          Future.microtask(() => viewModel.loadSlots(widget.station.id));
         }
 
         if (viewModel.slots.state == AsyncValueState.loading) {
           return Scaffold(
             appBar: AppBar(
-              title: Text("stationName"),
+              title: Text(widget.station.name),
               backgroundColor: Colors.teal,
               centerTitle: true,
               elevation: 0,
@@ -50,7 +49,7 @@ class _StationContentState extends State<StationContent> {
         if (viewModel.slots.state == AsyncValueState.error) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(widget.stationName),
+              title: Text(widget.station.name),
               backgroundColor: Colors.teal,
               centerTitle: true,
               elevation: 0,
@@ -71,7 +70,7 @@ class _StationContentState extends State<StationContent> {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => viewModel.loadSlots(widget.stationId),
+                    onPressed: () => viewModel.loadSlots(widget.station.id),
                     child: Text(loc.get('retry')),
                   ),
                 ],
@@ -86,7 +85,7 @@ class _StationContentState extends State<StationContent> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.stationName),
+            title: Text(widget.station.name),
             backgroundColor: Colors.teal,
             centerTitle: true,
             elevation: 0,
@@ -107,7 +106,7 @@ class _StationContentState extends State<StationContent> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  widget.stationName,
+                  widget.station.name,
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
