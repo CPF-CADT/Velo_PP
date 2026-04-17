@@ -95,22 +95,15 @@
     }
   ],
   "userPasses": [
-    {
-      "id": "up_001",
-      "userId": "user_001",
-      "passId": "pass_month",
-      "startDate": "2026-04-07T00:00:00Z",
-      "endDate": "2026-04-16T00:00:00Z",
-      "isActive": true
-    }
+
   ],
   "bookings": [
     {
       "id": "bk_001",
       "userId": "user_001",
       "bikeId": "bike_001",
-      "startStationId": "st_eden",
-      "endStationId": "st_central",
+      "startStationId": "st_01",
+      "endStationId": "st_02",
       "status": "completed",
       "paymentMethod": "wallet",
       "timeToPickup": "2026-04-17T00:15:00Z",
@@ -120,8 +113,8 @@
       "id": "bk_002",
       "userId": "user_001",
       "bikeId": "bike_004",
-      "startStationId": "st_central",
-      "endStationId": "st_riverside",
+      "startStationId": "st_02",
+      "endStationId": "st_03",
       "status": "completed",
       "paymentMethod": "card",
       "timeToPickup": "2026-04-16T00:00:00Z",

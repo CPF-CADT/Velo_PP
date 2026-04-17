@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/repositories/auth/auth_repository.dart';
 import 'package:velo_pp/data/repositories/bookings/bookings_repository.dart';
@@ -23,7 +25,9 @@ class MapViewModel extends ChangeNotifier {
   }) : _authRepository = authRepository,
        _bookingsRepository = bookingsRepository,
        _stationsRepository = stationsRepository,
-       _dockRepository = dockRepository;
+       _dockRepository = dockRepository {
+    _stationsRepository.addListener(_onStationsRepositoryChanged);
+  }
 
   bool get hasActiveRide {
     return _bookingsRepository.hasActiveBookingForUser(
@@ -46,25 +50,41 @@ class MapViewModel extends ChangeNotifier {
     return _availableSlotsByStation;
   }
 
-  Future<void> loadStations() async {
-    stations = AsyncValue.loading();
-    notifyListeners();
+  void _onStationsRepositoryChanged() {
+    unawaited(_syncStationsAndSlots(showLoading: false));
+  }
+
+  Future<void> _syncStationsAndSlots({required bool showLoading}) async {
+    if (showLoading) {
+      stations = AsyncValue.loading();
+      notifyListeners();
+    }
 
     try {
       final data = _stationsRepository.getStations();
       stations = AsyncValue.success(data);
 
+      _availableSlotsByStation.clear();
       for (final station in data) {
         final docks = await _dockRepository.getDocksByStationId(station.id);
         _availableSlotsByStation[station.id] = docks
             .where((dock) => dock.status == 'available')
             .length;
       }
-      notifyListeners();
     } catch (e) {
       stations = AsyncValue.error(e);
     }
 
     notifyListeners();
+  }
+
+  Future<void> loadStations() async {
+    await _syncStationsAndSlots(showLoading: true);
+  }
+
+  @override
+  void dispose() {
+    _stationsRepository.removeListener(_onStationsRepositoryChanged);
+    super.dispose();
   }
 }

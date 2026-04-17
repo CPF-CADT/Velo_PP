@@ -54,8 +54,19 @@ class StationDto {
   }
 
   factory StationDto.fromMap(Map<String, dynamic> map) {
-    final latitude = (map['latitude'] ?? map['lat'] ?? 0).toDouble();
-    final longitude = (map['longitude'] ?? map['lng'] ?? 0).toDouble();
+    final nestedLocation = map['location'];
+    final latitude =
+        (map['latitude'] ??
+                map['lat'] ??
+                (nestedLocation is Map ? nestedLocation['lat'] : null) ??
+                0)
+            .toDouble();
+    final longitude =
+        (map['longitude'] ??
+                map['lng'] ??
+                (nestedLocation is Map ? nestedLocation['lng'] : null) ??
+                0)
+            .toDouble();
     final location = map['location'] is LatLng
         ? map['location'] as LatLng
         : LatLng(latitude, longitude);

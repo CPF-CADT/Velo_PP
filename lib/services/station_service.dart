@@ -5,71 +5,45 @@ import 'package:velo_pp/l10n/app_localizations.dart';
 abstract class StationGeographyService {
   const StationGeographyService();
 
-  List<Station> generateStations(LatLng userLocation, AppLocalizations loc);
+  List<Station> generateStations(
+    LatLng userLocation,
+    List<Station> repositoryStations,
+    AppLocalizations loc,
+  );
 }
 
 class MockStationGeographyService implements StationGeographyService {
   const MockStationGeographyService();
 
+  static const List<List<double>> _offsets = <List<double>>[
+    <double>[0.00045, 0.0],
+    <double>[0.003, 0.002],
+    <double>[0.001, -0.004],
+    <double>[-0.004, -0.002],
+    <double>[-0.001, 0.005],
+  ];
+
   @override
-  List<Station> generateStations(LatLng userLocation, AppLocalizations loc) {
-    return [
-      Station(
-        id: 'st_01',
-        name: 'Eden Garden Station',
+  List<Station> generateStations(
+    LatLng userLocation,
+    List<Station> repositoryStations,
+    AppLocalizations loc,
+  ) {
+    if (repositoryStations.isEmpty) {
+      return <Station>[];
+    }
+
+    return repositoryStations.asMap().entries.map((entry) {
+      final index = entry.key;
+      final station = entry.value;
+      final offset = _offsets[index % _offsets.length];
+      return station.copyWith(
         location: LatLng(
-          userLocation.latitude + 0.00045,
-          userLocation.longitude,
+          userLocation.latitude + offset[0],
+          userLocation.longitude + offset[1],
         ),
-        capacity: 12,
-        bikesAvailable: 4,
-        address: 'Eden Garden',
-      ),
-      Station(
-        id: 'st_02',
-        name: 'Central Market Station',
-        location: LatLng(
-          userLocation.latitude + 0.003,
-          userLocation.longitude + 0.002,
-        ),
-        capacity: 16,
-        bikesAvailable: 7,
-        address: 'Phsar Thmei',
-      ),
-      Station(
-        id: 'st_03',
-        name: 'Riverside Station',
-        location: LatLng(
-          userLocation.latitude + 0.001,
-          userLocation.longitude - 0.004,
-        ),
-        capacity: 10,
-        bikesAvailable: 3,
-        address: 'Sisowath Quay',
-      ),
-      Station(
-        id: 'st_04',
-        name: 'University Station',
-        location: LatLng(
-          userLocation.latitude - 0.004,
-          userLocation.longitude - 0.002,
-        ),
-        capacity: 14,
-        bikesAvailable: 6,
-        address: 'Russian Blvd',
-      ),
-      Station(
-        id: 'st_05',
-        name: 'Night Market Station',
-        location: LatLng(
-          userLocation.latitude - 0.001,
-          userLocation.longitude + 0.005,
-        ),
-        capacity: 8,
-        bikesAvailable: 2,
-        address: 'Night Market',
-      ),
-    ];
+      );
+    }).toList();
   }
 }
 
@@ -77,49 +51,12 @@ class RealStationGeographyService implements StationGeographyService {
   const RealStationGeographyService();
 
   @override
-  List<Station> generateStations(LatLng userLocation, AppLocalizations loc) {
-    return [
-      Station(
-        id: 'st_01',
-        name: 'Eden Garden Station',
-        location: const LatLng(11.5622, 104.9152),
-        capacity: 12,
-        bikesAvailable: 4,
-        address: 'Eden Garden',
-      ),
-      Station(
-        id: 'st_02',
-        name: 'Central Market Station',
-        location: const LatLng(11.5695, 104.9210),
-        capacity: 16,
-        bikesAvailable: 7,
-        address: 'Phsar Thmei',
-      ),
-      Station(
-        id: 'st_03',
-        name: 'Riverside Station',
-        location: const LatLng(11.5735, 104.9292),
-        capacity: 10,
-        bikesAvailable: 3,
-        address: 'Sisowath Quay',
-      ),
-      Station(
-        id: 'st_04',
-        name: 'University Station',
-        location: const LatLng(11.5529, 104.9166),
-        capacity: 14,
-        bikesAvailable: 6,
-        address: 'Russian Blvd',
-      ),
-      Station(
-        id: 'st_05',
-        name: 'Night Market Station',
-        location: const LatLng(11.5754, 104.9263),
-        capacity: 8,
-        bikesAvailable: 2,
-        address: 'Night Market',
-      ),
-    ];
+  List<Station> generateStations(
+    LatLng userLocation,
+    List<Station> repositoryStations,
+    AppLocalizations loc,
+  ) {
+    return repositoryStations;
   }
 }
 

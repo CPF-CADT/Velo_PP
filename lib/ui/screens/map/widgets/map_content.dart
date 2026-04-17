@@ -42,7 +42,6 @@ class _MapContentState extends State<MapContent> {
   String? errorMessage;
   Station? selectedStation;
   String searchText = '';
-  List<Station> nearbyMockStations = const [];
   bool _isNavigatingToSlotSelection = false;
 
   @override
@@ -84,17 +83,29 @@ class _MapContentState extends State<MapContent> {
 
   void _loadStations(LatLng location) {
     final viewModel = context.read<MapViewModel>();
-    final stationGeographyService = context.read<StationGeographyService>();
-    final loc = AppLocalizations.of(context);
     setState(() {
       userLocation = location;
       errorMessage = null;
-      nearbyMockStations = stationGeographyService.generateStations(
-        location,
-        loc,
-      );
     });
     viewModel.loadStations();
+  }
+
+  List<Station> _buildDisplayStations() {
+    final location = userLocation;
+    if (location == null) {
+      return const <Station>[];
+    }
+
+    final viewModel = context.read<MapViewModel>();
+    final stationGeographyService = context.read<StationGeographyService>();
+    final loc = AppLocalizations.of(context);
+    final repoStations = viewModel.stations.data ?? const <Station>[];
+
+    return stationGeographyService.generateStations(
+      location,
+      repoStations,
+      loc,
+    );
   }
 
   List<Station> _getFilteredStations(List<Station> stations) {
@@ -265,10 +276,8 @@ class _MapContentState extends State<MapContent> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
-    final viewModel = context.watch<MapViewModel>();
-    final stations = nearbyMockStations.isNotEmpty
-        ? nearbyMockStations
-        : (viewModel.stations.data ?? []);
+    context.watch<MapViewModel>();
+    final stations = _buildDisplayStations();
 
     if (errorMessage != null) {
       return Center(
@@ -497,10 +506,8 @@ class _MapContentState extends State<MapContent> {
   }
 
   Widget _buildSearchOverlay() {
-    final viewModel = context.watch<MapViewModel>();
-    final stations = nearbyMockStations.isNotEmpty
-        ? nearbyMockStations
-        : (viewModel.stations.data ?? []);
+    context.watch<MapViewModel>();
+    final stations = _buildDisplayStations();
 
     return MapSearchOverlay(
       onProfileTap: widget.onProfileTap,

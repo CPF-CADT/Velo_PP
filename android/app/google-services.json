@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "764247533458",
+    "firebase_url": "https://velo-pp-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "velo-pp",
+    "storage_bucket": "velo-pp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:764247533458:android:a10d4802303df065a5034b",
+        "android_client_info": {
+          "package_name": "com.example.velo_pp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvm_2NqXp4tIYLFy6OuwWvU0BM5n1jtxk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
