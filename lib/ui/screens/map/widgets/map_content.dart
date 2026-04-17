@@ -17,8 +17,15 @@ import 'package:velo_pp/core/utils/distance_calculator.dart';
 
 class MapContent extends StatefulWidget {
   final VoidCallback onProfileTap;
+  final VoidCallback onQuickReturnTap;
+  final VoidCallback onOpenPassesTap;
 
-  const MapContent({super.key, required this.onProfileTap});
+  const MapContent({
+    super.key,
+    required this.onProfileTap,
+    required this.onQuickReturnTap,
+    required this.onOpenPassesTap,
+  });
 
   @override
   State<MapContent> createState() => _MapContentState();
@@ -88,8 +95,9 @@ class _MapContentState extends State<MapContent> {
   }
 
   List<Station> _getFilteredStations(List<Station> stations) {
+    final viewModel = context.read<MapViewModel>();
     final availableStations = stations
-        .where((station) => station.bikesAvailable > 0)
+        .where((station) => viewModel.shouldShowStation(station))
         .toList();
 
     return StationService.filterStations(availableStations, searchText);
@@ -115,33 +123,13 @@ class _MapContentState extends State<MapContent> {
     return filtered;
   }
 
-  List<Station> _getAllStationsSortedByDistance(List<Station> stations) {
-    final filtered = StationService.filterStations(stations, searchText);
-    if (userLocation == null) {
-      return filtered;
-    }
-
-    filtered.sort((a, b) {
-      final distanceA = CustomDistanceCalculator.calculateDistance(
-        userLocation!,
-        a.location,
-      );
-      final distanceB = CustomDistanceCalculator.calculateDistance(
-        userLocation!,
-        b.location,
-      );
-      return distanceA.compareTo(distanceB);
-    });
-    return filtered;
-  }
-
   void _selectStationFromSearch(Station station) {
     setState(() {
       selectedStation = station;
       searchText = station.name;
     });
     mapController.move(station.location, 17);
-    _showStationInfoBottomSheet(station);
+    _openMockSlotSelection(station);
   }
 
   void _showStationsBottomSheet(List<Station> stations) {
@@ -181,7 +169,12 @@ class _MapContentState extends State<MapContent> {
 
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => StationScreen(station: station)),
+      MaterialPageRoute(
+        builder: (_) => StationScreen(
+          station: station,
+          onOpenPassesTap: widget.onOpenPassesTap,
+        ),
+      ),
     );
 
     if (!mounted) return;
@@ -300,8 +293,9 @@ class _MapContentState extends State<MapContent> {
       children: [
         _buildMapView(stations),
         _buildMapControls(),
-        _buildAvailableButton(stations),
+        _buildActionButton(stations),
         _buildSearchOverlay(),
+        _buildRideStatusBanner(),
       ],
     );
   }
@@ -445,15 +439,21 @@ class _MapContentState extends State<MapContent> {
     );
   }
 
-  Widget _buildAvailableButton(List<Station> stations) {
+  Widget _buildActionButton(List<Station> stations) {
     final loc = AppLocalizations.of(context);
+    final viewModel = context.watch<MapViewModel>();
+    final isReturnMode = viewModel.hasActiveRide;
 
     return Positioned(
-      bottom: 20,
+      bottom: isReturnMode ? 92 : 20,
       right: 20,
       child: GestureDetector(
-        onTap: () => _openNearestStationSlotSelection(stations),
-        onLongPress: () => _showStationsBottomSheet(stations),
+        onTap: isReturnMode
+            ? widget.onQuickReturnTap
+            : () => _openNearestStationSlotSelection(stations),
+        onLongPress: isReturnMode
+            ? null
+            : () => _showStationsBottomSheet(stations),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.teal,
@@ -463,10 +463,14 @@ class _MapContentState extends State<MapContent> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.near_me, color: Colors.white, size: 24),
+              Icon(
+                isReturnMode ? Icons.assignment_return : Icons.near_me,
+                color: Colors.white,
+                size: 24,
+              ),
               const SizedBox(width: 12),
               Text(
-                loc.get('quickSelect'),
+                isReturnMode ? 'Quick Return' : loc.get('quickSelect'),
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -488,7 +492,7 @@ class _MapContentState extends State<MapContent> {
 
     return MapSearchOverlay(
       onProfileTap: widget.onProfileTap,
-      stations: _getAllStationsSortedByDistance(stations),
+      stations: _getAvailableStationsSortedByDistance(stations),
       userLocation: userLocation,
       onStationSelected: _selectStationFromSearch,
       onSearchChanged: (value) {
@@ -496,6 +500,41 @@ class _MapContentState extends State<MapContent> {
           searchText = value;
         });
       },
+    );
+  }
+
+  Widget _buildRideStatusBanner() {
+    final viewModel = context.watch<MapViewModel>();
+    if (!viewModel.hasActiveRide) {
+      return const SizedBox.shrink();
+    }
+
+    return Positioned(
+      left: 12,
+      right: 12,
+      bottom: 20,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.orange.withValues(alpha: 0.95),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Row(
+          children: [
+            Icon(Icons.pedal_bike, color: Colors.white, size: 18),
+            SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'You are currently holding a bike. Return it before booking another one.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -4,82 +4,72 @@ import 'package:velo_pp/model/dock.dart';
 class SlotCard extends StatelessWidget {
   final Dock slot;
   final VoidCallback onTap;
-  final Function(Dock)? onDismiss;
-  final Dock? lastReleasedBike;
+  final Future<void> Function()? onDismiss;
+  final String bikeLabel;
+  final bool isSelected;
 
   const SlotCard({
     super.key,
     required this.slot,
     required this.onTap,
     this.onDismiss,
-    this.lastReleasedBike,
+    required this.bikeLabel,
+    this.isSelected = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final isOccupied = slot.status == 'occupied';
 
-    if (isOccupied) {
-      return Dismissible(
-        key: Key(slot.id),
-        direction: DismissDirection.horizontal,
-        confirmDismiss: (direction) async {
-          // Validate before allowing dismissal
-          if (lastReleasedBike != null && lastReleasedBike!.id != slot.id) {
-            // Show failure alert for trying to release second bike
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text(
-                    'You can only use one bike at a time.',
-                  ),
-                  duration: const Duration(seconds: 3),
-                  backgroundColor: Colors.red[700],
-                ),
-              );
-            }
-            return false; // Prevent dismissal
-          }
-          return true; // Allow dismissal
-        },
-        onDismissed: (direction) {
-          // FIRST: Call parent to remove widget from tree immediately
-          onDismiss?.call(slot);
-
-          // SECOND: Show feedback AFTER parent removes widget
-          // Use addPostFrameCallback to ensure rebuild is complete
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${slot.bikeId} has been released'),
-                  duration: const Duration(seconds: 2),
-                  backgroundColor: Colors.green[700],
-                ),
-              );
-            }
-          });
-        },
-        background: Container(
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.only(right: 20),
-          color: Colors.red,
-          child: const Icon(
-            Icons.close,
-            color: Colors.white,
-            size: 28,
-          ),
-        ),
-        child: _buildSlotCard(isOccupied),
-      );
+    if (!isOccupied) {
+      return _buildSlotCard(isOccupied);
     }
 
-    return _buildSlotCard(isOccupied);
+    return Dismissible(
+      key: ValueKey('slot_select_${slot.id}'),
+      direction: DismissDirection.horizontal,
+      confirmDismiss: (_) async {
+        if (onDismiss != null) {
+          await onDismiss!();
+        } else {
+          onTap();
+        }
+        return false;
+      },
+      background: _buildSwipeBackground(
+        alignment: Alignment.centerLeft,
+        icon: Icons.swipe_right_alt,
+      ),
+      secondaryBackground: _buildSwipeBackground(
+        alignment: Alignment.centerRight,
+        icon: Icons.swipe_left_alt,
+      ),
+      child: _buildSlotCard(isOccupied),
+    );
+  }
+
+  Widget _buildSwipeBackground({
+    required Alignment alignment,
+    required IconData icon,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.teal.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      alignment: alignment,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Icon(icon, color: Colors.teal, size: 22),
+    );
   }
 
   Widget _buildSlotCard(bool isOccupied) {
-    final bgColor = isOccupied ? Colors.teal[50] : Colors.grey[50];
-    final borderColor = isOccupied ? Colors.teal : Colors.grey[300];
+    final bgColor = isSelected
+        ? Colors.teal[100]
+        : (isOccupied ? Colors.teal[50] : Colors.grey[50]);
+    final borderColor = isSelected
+        ? Colors.teal[700]
+        : (isOccupied ? Colors.teal : Colors.grey[300]);
 
     return GestureDetector(
       onTap: onTap,
@@ -112,11 +102,8 @@ class SlotCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   if (slot.bikeId.isNotEmpty)
                     Text(
-                      'Bike: ${slot.bikeId}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      'Bike: $bikeLabel',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                 ],
               ),
@@ -124,11 +111,13 @@ class SlotCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: isOccupied ? Colors.teal : Colors.grey[400],
+                color: isSelected
+                    ? Colors.teal[700]
+                    : (isOccupied ? Colors.teal : Colors.grey[400]),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                slot.status,
+                isSelected ? 'selected' : slot.status,
                 style: const TextStyle(
                   fontSize: 12,
                   color: Colors.white,
