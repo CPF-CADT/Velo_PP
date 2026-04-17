@@ -72,7 +72,7 @@ class PassContent extends StatelessWidget {
                 child: PassCard(
                   title: pass.name,
                   price: '\$${pass.price.toStringAsFixed(0)}',
-                  description: 'Valid for ${pass.durationHours} hours',
+                  description: 'Available for ${pass.durationHours} hours',
                   features: pass.features,
                   buttonLabel: buttonLabel,
                   isFeatured: isFeatured,
