@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'config/app_theme.dart';
 import 'core/constants/app_constants.dart';
+import 'core/theme/app_colors.dart';
+import 'core/theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'ui/screens/map/map_screen.dart';
 import 'ui/screens/passes/passes_screen.dart';
@@ -120,8 +121,8 @@ class _MainScreenState extends State<MainScreen> {
             _currentTab = index;
           });
         },
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.gray500,
         items: [
           BottomNavigationBarItem(
             icon: const Icon(Icons.style),

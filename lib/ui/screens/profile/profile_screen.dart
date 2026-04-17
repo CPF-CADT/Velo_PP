@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
+import 'package:velo_pp/core/widgets/app_card.dart';
 import 'package:velo_pp/core/constants/app_constants.dart';
 import 'package:velo_pp/data/repositories/auth/auth_repository.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
@@ -33,20 +37,17 @@ class _ProfileView extends StatelessWidget {
     final loc = AppLocalizations.of(context);
     final viewModel = context.watch<ProfileViewModel>();
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppColors.background,
       appBar: AppBar(title: Text(loc.get('profile'))),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildProfileCard(context, loc, viewModel),
-            const SizedBox(height: 16),
-            Text(
-              loc.get('userSettings'),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
+            Text(loc.get('userSettings'), style: AppTextStyles.title),
+            const SizedBox(height: AppSpacing.s12),
             _buildLanguageCard(context, loc, viewModel),
           ],
         ),
@@ -61,41 +62,35 @@ class _ProfileView extends StatelessWidget {
   ) {
     final user = viewModel.user;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard(
       child: Column(
         children: [
           CircleAvatar(
-            radius: 34,
-            backgroundColor: Colors.teal,
+            radius: AppSpacing.s34,
+            backgroundColor: AppColors.primary,
             child: Text(
               viewModel.initials,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+              style: AppTextStyles.title.copyWith(
+                color: AppColors.white,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.s12),
           Text(
             user.displayName,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: AppTextStyles.title,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             user.email,
-            style: TextStyle(color: Colors.grey[600]),
+            style: AppTextStyles.caption.copyWith(color: AppColors.gray600),
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.md),
           _buildInfoRow(loc.get('email'), user.email),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           _buildInfoRow(loc.get('phone'), user.phone),
         ],
       ),
@@ -107,21 +102,13 @@ class _ProfileView extends StatelessWidget {
     AppLocalizations loc,
     ProfileViewModel viewModel,
   ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard(
       child: Row(
         children: [
-          const Icon(Icons.language, color: Colors.teal),
-          const SizedBox(width: 12),
+          const Icon(Icons.language, color: AppColors.primary),
+          const SizedBox(width: AppSpacing.s12),
           Expanded(
-            child: Text(
-              loc.get('language'),
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
+            child: Text(loc.get('language'), style: AppTextStyles.subtitle),
           ),
           ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 110, maxWidth: 150),
@@ -154,7 +141,7 @@ class _ProfileView extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
+            style: AppTextStyles.caption.copyWith(color: AppColors.gray500),
           ),
         ),
         Flexible(
@@ -162,7 +149,7 @@ class _ProfileView extends StatelessWidget {
             value,
             textAlign: TextAlign.right,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.w600),
+            style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
           ),
         ),
       ],

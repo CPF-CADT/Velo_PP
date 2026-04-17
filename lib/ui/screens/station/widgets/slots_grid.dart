@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:velo_pp/model/dock.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
 import 'slot_card.dart';
 
 class SlotsGrid extends StatelessWidget {
@@ -25,11 +28,15 @@ class SlotsGrid extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox_outlined, size: 48, color: Colors.grey[400]),
-            const SizedBox(height: 12),
+            const Icon(
+              Icons.inbox_outlined,
+              size: AppSpacing.s48,
+              color: AppColors.gray400,
+            ),
+            const SizedBox(height: AppSpacing.s12),
             Text(
               'No slots available',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              style: AppTextStyles.subtitle.copyWith(color: AppColors.gray600),
             ),
           ],
         ),
@@ -38,7 +45,8 @@ class SlotsGrid extends StatelessWidget {
 
     return ListView.separated(
       itemCount: slots.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: AppSpacing.s12),
       itemBuilder: (context, index) {
         final slot = slots[index];
         return SlotCard(

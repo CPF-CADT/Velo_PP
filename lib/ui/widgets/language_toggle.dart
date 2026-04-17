@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
 
 class LanguageToggle extends StatelessWidget {
   final Function(Locale) onLocaleChange;
@@ -14,8 +17,8 @@ class LanguageToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.teal),
-        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.primary),
+        borderRadius: BorderRadius.circular(AppSpacing.r20),
       ),
       child: Row(
         children: [
@@ -42,17 +45,19 @@ class LanguageToggle extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: AppSpacing.symmetric(
+          horizontal: AppSpacing.s12,
+          vertical: AppSpacing.sm,
+        ),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.teal : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
+          color: isSelected ? AppColors.primary : AppColors.transparent,
+          borderRadius: BorderRadius.circular(AppSpacing.r18),
         ),
         child: Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : Colors.teal,
+          style: AppTextStyles.caption.copyWith(
+            fontWeight: FontWeight.w700,
+            color: isSelected ? AppColors.white : AppColors.primary,
           ),
         ),
       ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
 
 class CustomSearchBar extends StatefulWidget {
   final Function(String) onChanged;
@@ -51,18 +54,18 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   @override
   Widget build(BuildContext context) {
     final borderRadius = widget.removeBottomRadius
-        ? const BorderRadius.only(
-            topLeft: Radius.circular(28),
-            topRight: Radius.circular(28),
+        ? BorderRadius.only(
+            topLeft: Radius.circular(AppSpacing.r28),
+            topRight: Radius.circular(AppSpacing.r28),
           )
-        : BorderRadius.circular(28);
+        : BorderRadius.circular(AppSpacing.r28);
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: borderRadius,
         border: Border.all(
-          color: _isFocused ? Colors.teal : Colors.grey[300]!,
+          color: _isFocused ? AppColors.primary : AppColors.gray300,
           width: 1.5,
         ),
       ),
@@ -73,49 +76,47 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           hintText: widget.hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 15,
+          hintStyle: AppTextStyles.body.copyWith(
+            color: AppColors.gray400,
             fontWeight: FontWeight.w400,
           ),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
           prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 12),
+            padding: AppSpacing.only(left: AppSpacing.s12),
             child: Icon(
               Icons.location_on,
-              color: _isFocused ? Colors.teal : Colors.grey[600],
-              size: 22,
+              color: _isFocused ? AppColors.primary : AppColors.gray600,
+              size: AppSpacing.s22,
             ),
           ),
           prefixIconConstraints: const BoxConstraints(
-            minWidth: 40,
-            minHeight: 48,
+            minWidth: AppSpacing.s40,
+            minHeight: AppSpacing.s48,
           ),
           suffixIcon: Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: AppSpacing.only(right: AppSpacing.s12),
             child: Icon(
               Icons.search,
-              color: _isFocused ? Colors.teal : Colors.grey[400],
-              size: 22,
+              color: _isFocused ? AppColors.primary : AppColors.gray400,
+              size: AppSpacing.s22,
             ),
           ),
           suffixIconConstraints: const BoxConstraints(
-            minWidth: 40,
-            minHeight: 48,
+            minWidth: AppSpacing.s40,
+            minHeight: AppSpacing.s48,
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 14,
-            horizontal: 8,
+          contentPadding: AppSpacing.symmetric(
+            vertical: AppSpacing.s14,
+            horizontal: AppSpacing.sm,
           ),
         ),
-        style: const TextStyle(
-          fontSize: 15,
-          color: Colors.black87,
+        style: AppTextStyles.body.copyWith(
+          color: AppColors.gray900,
           fontWeight: FontWeight.w500,
         ),
-        cursorColor: Colors.teal,
+        cursorColor: AppColors.primary,
         cursorWidth: 2,
       ),
     );

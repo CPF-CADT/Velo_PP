@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 class AppConstants {
   // Map
@@ -16,9 +17,9 @@ class AppConstants {
   static const String latinFontFamily = 'Roboto';
 
   // Colors
-  static const Color primaryColor = Colors.teal;
-  static const Color accentColor = Colors.orange;
-  static const Color errorColor = Colors.red;
+  static const Color primaryColor = AppColors.primary;
+  static const Color accentColor = AppColors.secondary;
+  static const Color errorColor = AppColors.error;
 
   // Distances for station offset
   static const double stationOffsetLat1 = 0.002;

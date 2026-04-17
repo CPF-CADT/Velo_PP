@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
 
 class AppHeader extends StatelessWidget {
   final VoidCallback? onProfileTap;
@@ -11,8 +14,13 @@ class AppHeader extends StatelessWidget {
     final loc = AppLocalizations.of(context);
 
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      color: AppColors.surface,
+      padding: AppSpacing.fromLTRB(
+        AppSpacing.md,
+        AppSpacing.s12,
+        AppSpacing.md,
+        AppSpacing.s12,
+      ),
       child: SafeArea(
         bottom: false,
         child: Column(
@@ -24,19 +32,19 @@ class AppHeader extends StatelessWidget {
               children: [
                 Text(
                   loc.get('appTitle'),
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal,
-                  ),
+                  style: AppTextStyles.title.copyWith(color: AppColors.primary),
                 ),
                 InkWell(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(AppSpacing.r20),
                   onTap: onProfileTap,
                   child: const CircleAvatar(
-                    radius: 18,
-                    backgroundColor: Colors.teal,
-                    child: Icon(Icons.person, color: Colors.white, size: 18),
+                    radius: AppSpacing.s18,
+                    backgroundColor: AppColors.primary,
+                    child: Icon(
+                      Icons.person,
+                      color: AppColors.white,
+                      size: AppSpacing.s18,
+                    ),
                   ),
                 ),
               ],

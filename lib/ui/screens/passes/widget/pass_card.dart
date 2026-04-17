@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
+import 'package:velo_pp/core/widgets/app_button.dart';
+import 'package:velo_pp/core/widgets/app_card.dart';
 
 class PassCard extends StatelessWidget {
   final String title;
@@ -22,62 +27,77 @@ class PassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
-    Color bgColor = isFeatured ? const Color(0xFF2D2D2D) : const Color(0xFFF5F5F5);
-    Color textColor = isFeatured ? Colors.white : Colors.black;
+    final bgColor = isFeatured ? AppColors.darkSurface : AppColors.gray100;
+    final textColor = isFeatured ? AppColors.white : AppColors.textPrimary;
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard(
+      color: bgColor,
+      padding: AppSpacing.all(AppSpacing.s20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-    // Title
-          Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: textColor)),
-          const SizedBox(height: 12),
+          Text(title, style: AppTextStyles.subtitle.copyWith(color: textColor)),
+          const SizedBox(height: AppSpacing.s12),
 
-    // Price
-          Text(price, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Color(0xFF00D084))),
-          const SizedBox(height: 4),
+          Text(
+            price,
+            style: AppTextStyles.headingLarge.copyWith(
+              color: AppColors.success,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
 
-      // Description
-          Text(description, style: TextStyle(fontSize: 12, color: isFeatured ? Colors.grey[400] : Colors.grey[600])),
-          const SizedBox(height: 16),
+          Text(
+            description,
+            style: AppTextStyles.caption.copyWith(
+              color: isFeatured ? AppColors.gray400 : AppColors.gray600,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
 
-      // Features List
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: features.map((feature) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: AppSpacing.only(bottom: AppSpacing.sm),
                 child: Row(
                   children: [
-                    const Icon(Icons.check_circle, size: 16, color: Color(0xFF00D084)),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(feature, style: TextStyle(fontSize: 13, color: isFeatured ? Colors.grey[300] : Colors.grey[700]))),
+                    const Icon(
+                      Icons.check_circle,
+                      size: AppSpacing.md,
+                      color: AppColors.success,
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        feature,
+                        style: AppTextStyles.body.copyWith(
+                          color: isFeatured
+                              ? AppColors.gray300
+                              : AppColors.gray700,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               );
             }).toList(),
           ),
-          const SizedBox(height: 20),
-
-          // Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: onPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isFeatured ? Colors.white : const Color(0xFF00D084),
-                foregroundColor: isFeatured ? Colors.black : Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          const SizedBox(height: AppSpacing.s20),
+          Theme(
+            data: Theme.of(context).copyWith(
+              elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isFeatured
+                      ? AppColors.white
+                      : AppColors.success,
+                  foregroundColor: isFeatured
+                      ? AppColors.textPrimary
+                      : AppColors.white,
+                ),
               ),
-              child: Text(buttonLabel, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
             ),
+            child: AppButton(label: buttonLabel, onPressed: onPressed),
           ),
         ],
       ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 
 class ControlButton extends StatelessWidget {
   final IconData icon;
@@ -11,13 +13,13 @@ class ControlButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: 40,
-        height: 40,
+        width: AppSpacing.s40,
+        height: AppSpacing.s40,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, size: 20, color: Colors.black87),
+        child: Icon(icon, size: AppSpacing.s20, color: AppColors.gray900),
       ),
     );
   }

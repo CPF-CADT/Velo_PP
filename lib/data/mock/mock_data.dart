@@ -155,6 +155,13 @@ class MockData {
 
   static final List<PassDto> passes = [
     const PassDto(
+      id: 'single_pass',
+      name: 'Single Pass',
+      price: 1,
+      durationHours: 24,
+      features: ['Oneway rides'],
+    ),
+    const PassDto(
       id: 'pass_day',
       name: 'Day Pass',
       price: 5.0,
