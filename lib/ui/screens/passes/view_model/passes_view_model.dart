@@ -101,5 +101,4 @@ class PassesViewModel extends ChangeNotifier {
     }
     return null;
   }
-
 }

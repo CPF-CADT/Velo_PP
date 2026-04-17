@@ -142,7 +142,7 @@ class StationViewModel extends ChangeNotifier {
       if (purchasePassId == null) {
         throw const PassRequiredException();
       }
-      await _passesRepository.purchasePass(userId, purchasePassId);
+      await _passesRepository.purchasePass(userId, purchasePassId, true );
     }
 
     _isBooking = true;
