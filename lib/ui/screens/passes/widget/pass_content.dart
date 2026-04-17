@@ -83,11 +83,13 @@ class PassContent extends StatelessWidget {
                 child: PassCard(
                   title: pass.name,
                   price: '\$${pass.price.toStringAsFixed(0)}',
-                  description: 'Valid for ${pass.durationHours} hours',
+                  description: 'Available for ${pass.durationHours} hours',
                   features: pass.features,
                   buttonLabel: buttonLabel,
                   isFeatured: isFeatured,
-                  onPressed: isDisabled ? () {} : () => viewModel.buyPass(pass.id),
+                  onPressed: isDisabled ? () {} : () {
+                   _showPurchaseDialog(context, viewModel, pass.id);
+                  } 
                 ),
               );
             }),
@@ -96,4 +98,35 @@ class PassContent extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showPurchaseDialog(
+  BuildContext context,
+  PassesViewModel viewModel,
+  String passId,
+) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Confirm Purchase'),
+      content: const Text(
+        'Are you sure you want to purchase this pass?'
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);  
+          },
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            viewModel.buyPass(passId, addDuration: true);  // confirm purchase
+          },
+          child: const Text('Pay Now'),
+        ),
+      ],
+    ),
+  );
 }
