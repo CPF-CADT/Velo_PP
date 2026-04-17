@@ -1,0 +1,131 @@
+{
+  "users": [
+    {
+      "id": "user_001",
+      "displayName": "Sok Dara",
+      "email": "sok.dara@example.com",
+      "phone": "+855 12 345 678"
+    }
+  ],
+  "stations": [
+    {
+      "id": "st_01",
+      "name": "Eden Garden Station",
+      "location": { "lat": 11.5622, "lng": 104.9152 },
+      "capacity": 12,
+      "bikesAvailable": 4,
+      "address": "Eden Garden"
+    },
+    {
+      "id": "st_02",
+      "name": "Central Market Station",
+      "location": { "lat": 11.5695, "lng": 104.921 },
+      "capacity": 16,
+      "bikesAvailable": 7,
+      "address": "Phsar Thmei"
+    },
+    {
+      "id": "st_03",
+      "name": "Riverside Station",
+      "location": { "lat": 11.5735, "lng": 104.9292 },
+      "capacity": 10,
+      "bikesAvailable": 3,
+      "address": "Sisowath Quay"
+    },
+    {
+      "id": "st_04",
+      "name": "University Station",
+      "location": { "lat": 11.5529, "lng": 104.9166 },
+      "capacity": 14,
+      "bikesAvailable": 6,
+      "address": "Russian Blvd"
+    },
+    {
+      "id": "st_05",
+      "name": "Night Market Station",
+      "location": { "lat": 11.5754, "lng": 104.9263 },
+      "capacity": 8,
+      "bikesAvailable": 2,
+      "address": "Night Market"
+    }
+  ],
+  "bikes": [
+    { "id": "bike_001", "model": "Urban Glide Pro", "status": "available" },
+    { "id": "bike_002", "model": "City Sprint", "status": "available" },
+    { "id": "bike_003", "model": "Simple Bike", "status": "maintenance" },
+    { "id": "bike_004", "model": "Eco Ride", "status": "available" },
+    { "id": "bike_005", "model": "City Sprint", "status": "in_use" },
+    { "id": "bike_006", "model": "Urban Glide Pro", "status": "available" },
+    { "id": "bike_007", "model": "Eco Ride", "status": "available" },
+    { "id": "bike_008", "model": "City Sprint", "status": "available" }
+  ],
+  "docks": [
+    { "id": "dock_01_01", "stationId": "st_01", "bikeId": "bike_001", "slotNumber": "01", "status": "occupied" },
+    { "id": "dock_01_02", "stationId": "st_01", "bikeId": "bike_002", "slotNumber": "02", "status": "occupied" },
+    { "id": "dock_01_03", "stationId": "st_01", "bikeId": "", "slotNumber": "03", "status": "available" },
+    { "id": "dock_02_01", "stationId": "st_02", "bikeId": "bike_004", "slotNumber": "01", "status": "occupied" },
+    { "id": "dock_02_02", "stationId": "st_02", "bikeId": "bike_006", "slotNumber": "02", "status": "occupied" },
+    { "id": "dock_02_03", "stationId": "st_02", "bikeId": "bike_007", "slotNumber": "03", "status": "occupied" },
+    { "id": "dock_03_01", "stationId": "st_03", "bikeId": "bike_008", "slotNumber": "01", "status": "occupied" },
+    { "id": "dock_04_01", "stationId": "st_04", "bikeId": "bike_005", "slotNumber": "01", "status": "occupied" },
+    { "id": "dock_04_02", "stationId": "st_04", "bikeId": "", "slotNumber": "02", "status": "available" },
+    { "id": "dock_05_01", "stationId": "st_05", "bikeId": "bike_003", "slotNumber": "01", "status": "occupied" }
+  ],
+  "passes": [
+    {
+      "id": "pass_day",
+      "name": "Day Pass",
+      "price": 5.0,
+      "durationHours": 24,
+      "features": ["Unlimited 30-min rides"]
+    },
+    {
+      "id": "pass_month",
+      "name": "Monthly Pass",
+      "price": 25.0,
+      "durationHours": 720,
+      "features": ["Unlimited 60min rides", "Priority Bike Access"]
+    },
+    {
+      "id": "pass_year",
+      "name": "Annual Pass",
+      "price": 120.0,
+      "durationHours": 8760,
+      "features": ["Unlimited rides", "Priority bike access", "Free bike parking", "Priority support"]
+    }
+  ],
+  "userPasses": [
+    {
+      "id": "up_001",
+      "userId": "user_001",
+      "passId": "pass_month",
+      "startDate": "2026-04-07T00:00:00Z",
+      "endDate": "2026-04-16T00:00:00Z",
+      "isActive": true
+    }
+  ],
+  "bookings": [
+    {
+      "id": "bk_001",
+      "userId": "user_001",
+      "bikeId": "bike_001",
+      "startStationId": "st_eden",
+      "endStationId": "st_central",
+      "status": "completed",
+      "paymentMethod": "wallet",
+      "timeToPickup": "2026-04-17T00:15:00Z",
+      "createdAt": "2026-04-17T00:05:00Z"
+    },
+    {
+      "id": "bk_002",
+      "userId": "user_001",
+      "bikeId": "bike_004",
+      "startStationId": "st_central",
+      "endStationId": "st_riverside",
+      "status": "completed",
+      "paymentMethod": "card",
+      "timeToPickup": "2026-04-16T00:00:00Z",
+      "createdAt": "2026-04-15T22:00:00Z"
+    }
+  ]
+}

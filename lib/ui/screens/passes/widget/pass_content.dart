@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:velo_pp/core/utils/async_value.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
 import 'package:velo_pp/ui/screens/passes/view_model/passes_view_model.dart';
 import 'package:velo_pp/ui/screens/passes/widget/pass_card.dart';
-
 
 class PassContent extends StatelessWidget {
   const PassContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<PassesViewModel>();  
-    final state = viewModel.passes;   // store async value states
+    final viewModel = context.watch<PassesViewModel>();
+    final state = viewModel.passes; // store async value states
 
     if (state.state == AsyncValueState.loading) {
       return const Center(child: CircularProgressIndicator());
@@ -28,33 +29,19 @@ class PassContent extends StatelessWidget {
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: AppSpacing.all(AppSpacing.s20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Membership Plan',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Choose your pace.',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
+            Text('Membership Plan', style: AppTextStyles.body),
+            const SizedBox(height: AppSpacing.sm),
+            Text('Choose your pace.', style: AppTextStyles.headingLarge),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
               'Select the plan that fits your lifestyle.',
-              style: TextStyle(fontSize: 13, color: Colors.grey),
+              style: AppTextStyles.caption,
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xl),
 
             ...data.passes.map((pass) {
               final status = viewModel.getPassStatus(pass.id);
@@ -65,10 +52,12 @@ class PassContent extends StatelessWidget {
 
               if (status == PassStatus.active) {
                 final days = viewModel.getActiveDaysRemaining();
-                buttonLabel = days != null ? 'Active ($days day left)' : 'Active';
+                buttonLabel = days != null
+                    ? 'Active ($days day left)'
+                    : 'Active';
                 isFeatured = true;
                 isDisabled = true;
-            } else if (status == PassStatus.expired) {
+              } else if (status == PassStatus.expired) {
                 buttonLabel = 'Expired';
                 isDisabled = true;
               } else if (status == PassStatus.purchasing) {
@@ -79,15 +68,17 @@ class PassContent extends StatelessWidget {
               }
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
+                padding: AppSpacing.only(bottom: AppSpacing.md),
                 child: PassCard(
                   title: pass.name,
                   price: '\$${pass.price.toStringAsFixed(0)}',
-                  description: 'Valid for ${pass.durationHours} hours',
+                  description: 'Available for ${pass.durationHours} hours',
                   features: pass.features,
                   buttonLabel: buttonLabel,
                   isFeatured: isFeatured,
-                  onPressed: isDisabled ? () {} : () => viewModel.buyPass(pass.id),
+                  onPressed: isDisabled
+                      ? () {}
+                      : () => viewModel.buyPass(pass.id),
                 ),
               );
             }),

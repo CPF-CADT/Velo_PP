@@ -43,4 +43,47 @@ class MockDockRepository extends ChangeNotifier implements DockRepository {
     );
     return dock.toModel();
   }
+
+  @override
+  Future<void> checkoutBikeFromDock(String dockId) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final index = _docks.indexWhere((dock) => dock.id == dockId);
+    if (index == -1) {
+      throw Exception('Dock not found');
+    }
+
+    final dock = _docks[index];
+    _docks[index] = DockDto(
+      id: dock.id,
+      stationId: dock.stationId,
+      bikeId: '',
+      slotNumber: dock.slotNumber,
+      status: 'available',
+    );
+    notifyListeners();
+  }
+
+  @override
+  Future<void> assignBikeToDock({
+    required String dockId,
+    required String bikeId,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final index = _docks.indexWhere((dock) => dock.id == dockId);
+    if (index == -1) {
+      throw Exception('Dock not found');
+    }
+
+    final dock = _docks[index];
+    _docks[index] = DockDto(
+      id: dock.id,
+      stationId: dock.stationId,
+      bikeId: bikeId,
+      slotNumber: dock.slotNumber,
+      status: 'occupied',
+    );
+    notifyListeners();
+  }
 }

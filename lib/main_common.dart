@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'config/app_theme.dart';
 import 'core/constants/app_constants.dart';
+import 'core/theme/app_colors.dart';
+import 'core/theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'ui/screens/map/map_screen.dart';
 import 'ui/screens/passes/passes_screen.dart';
@@ -63,7 +64,9 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentTab = 1;
+  static const int _passesTabIndex = 0;
   static const int _mapTabIndex = 1;
+  static const int _ridesTabIndex = 2;
 
   void _openProfile() {
     Navigator.of(context).push(
@@ -71,6 +74,18 @@ class _MainScreenState extends State<MainScreen> {
         builder: (_) => ProfileScreen(onLocaleChange: widget.onLocaleChange),
       ),
     );
+  }
+
+  void _openRides() {
+    setState(() {
+      _currentTab = _ridesTabIndex;
+    });
+  }
+
+  void _openPasses() {
+    setState(() {
+      _currentTab = _passesTabIndex;
+    });
   }
 
   @override
@@ -87,7 +102,11 @@ class _MainScreenState extends State<MainScreen> {
               index: _currentTab,
               children: [
                 const PassesScreen(),
-                MapScreen(onProfileTap: _openProfile),
+                MapScreen(
+                  onProfileTap: _openProfile,
+                  onQuickReturnTap: _openRides,
+                  onOpenPassesTap: _openPasses,
+                ),
                 const RidesScreen(),
               ],
             ),
@@ -102,8 +121,8 @@ class _MainScreenState extends State<MainScreen> {
             _currentTab = index;
           });
         },
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.gray500,
         items: [
           BottomNavigationBarItem(
             icon: const Icon(Icons.style),

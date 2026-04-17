@@ -7,12 +7,7 @@ import 'package:velo_pp/model/user.dart';
 import 'package:velo_pp/model/user_pass.dart';
 import 'package:velo_pp/core/utils/async_value.dart';
 
-enum PassStatus {
-  available,
-  active,
-  expired,
-  purchasing,
-}
+enum PassStatus { available, active, expired, purchasing }
 
 class PassesData {
   final User user;
@@ -37,7 +32,9 @@ class PassesViewModel extends ChangeNotifier {
     required AuthRepository authRepository,
     required PassesRepository passesRepository,
   }) : _authRepository = authRepository,
-       _passesRepository = passesRepository;
+       _passesRepository = passesRepository {
+    loadPasses();
+  }
 
   Future<void> loadPasses() async {
     passes = AsyncValue.loading();
@@ -56,18 +53,18 @@ class PassesViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
   // buy pass
-  Future<void> buyPass(String passId) async{
-    _buyingPassId = passId;  // store the purchase pass
-    notifyListeners();   
+  Future<void> buyPass(String passId, {bool addDuration = false}) async {
+    _buyingPassId = passId; // store the purchase pass
+    notifyListeners();
 
-    try{
+    try {
       final user = _authRepository.currentUser;
-      await _passesRepository.purchasePass(user.id, passId);  // create new pass
+      await _passesRepository.purchasePass(user.id, passId); // create new pass
 
-      await loadPasses();  // refresh the data to show new pass 
-
-    }catch(e){
+      await loadPasses(); // refresh the data to show new pass
+    } catch (e) {
       _errorMessage = e.toString();
       print("fail to buy: $e");
     }
@@ -76,27 +73,27 @@ class PassesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  PassStatus getPassStatus(String passId){
-    if(_buyingPassId == passId){    // status for showing being purchase state
+  PassStatus getPassStatus(String passId) {
+    if (_buyingPassId == passId) {
+      // status for showing being purchase state
       return PassStatus.purchasing;
     }
     UserPass? activePass;
-    if(passes.state == AsyncValueState.success){
+    if (passes.state == AsyncValueState.success) {
       activePass = passes.data?.activePass; // get current active pass
     }
-    if(activePass != null && activePass.passId == passId){
-      return activePass.isExpired ? PassStatus.expired : PassStatus.active;  //
+    if (activePass != null && activePass.passId == passId) {
+      return activePass.isExpired ? PassStatus.expired : PassStatus.active;
     }
     return PassStatus.available;
   }
 
-  int? getActiveDaysRemaining(){
-    if(passes.state == AsyncValueState.success) {
-    final active = passes.data?.activePass; // get current active pass
-    if(active == null || active.isExpired) return null;  //
-        return active.remainingDays; // return the day remaining  
+  int? getActiveDaysRemaining() {
+    if (passes.state == AsyncValueState.success) {
+      final active = passes.data?.activePass; // get current active pass
+      if (active == null || active.isExpired) return null;
+      return active.remainingDays; // return the day remaining
     }
     return null;
   }
-
 }

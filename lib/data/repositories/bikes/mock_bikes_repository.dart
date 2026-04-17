@@ -29,4 +29,18 @@ class MockBikesRepository extends ChangeNotifier implements BikesRepository {
         .map((bike) => bike.toModel())
         .toList();
   }
+
+  @override
+  Future<void> updateBikeStatus(String bikeId, String status) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final index = _bikes.indexWhere((bike) => bike.id == bikeId);
+    if (index == -1) {
+      throw Exception('Bike not found');
+    }
+
+    final bike = _bikes[index];
+    _bikes[index] = BikeDto(id: bike.id, model: bike.model, status: status);
+    notifyListeners();
+  }
 }

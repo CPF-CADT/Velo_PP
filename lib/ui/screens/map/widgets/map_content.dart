@@ -3,22 +3,32 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' hide DistanceCalculator;
 import 'package:provider/provider.dart';
 import 'package:velo_pp/core/constants/app_constants.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
 import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
 import 'package:velo_pp/services/location_service.dart';
 import 'package:velo_pp/services/station_service.dart';
 import 'package:velo_pp/ui/screens/map/view_model/map_view_model.dart';
+import 'package:velo_pp/ui/screens/station/station_screen.dart';
 import 'package:velo_pp/ui/widgets/control_button.dart';
 import 'package:velo_pp/ui/screens/map/widgets/stations_bottom_sheet.dart';
 import 'package:velo_pp/ui/screens/map/widgets/map_search_overlay.dart';
 import 'package:velo_pp/ui/screens/map/widgets/station_modal.dart';
 import 'package:velo_pp/core/utils/distance_calculator.dart';
-import 'package:velo_pp/ui/screens/slot_selection_mock_screen.dart';
 
 class MapContent extends StatefulWidget {
   final VoidCallback onProfileTap;
+  final VoidCallback onQuickReturnTap;
+  final VoidCallback onOpenPassesTap;
 
-  const MapContent({super.key, required this.onProfileTap});
+  const MapContent({
+    super.key,
+    required this.onProfileTap,
+    required this.onQuickReturnTap,
+    required this.onOpenPassesTap,
+  });
 
   @override
   State<MapContent> createState() => _MapContentState();
@@ -88,8 +98,9 @@ class _MapContentState extends State<MapContent> {
   }
 
   List<Station> _getFilteredStations(List<Station> stations) {
+    final viewModel = context.read<MapViewModel>();
     final availableStations = stations
-        .where((station) => station.bikesAvailable > 0)
+        .where((station) => viewModel.shouldShowStation(station))
         .toList();
 
     return StationService.filterStations(availableStations, searchText);
@@ -115,33 +126,13 @@ class _MapContentState extends State<MapContent> {
     return filtered;
   }
 
-  List<Station> _getAllStationsSortedByDistance(List<Station> stations) {
-    final filtered = StationService.filterStations(stations, searchText);
-    if (userLocation == null) {
-      return filtered;
-    }
-
-    filtered.sort((a, b) {
-      final distanceA = CustomDistanceCalculator.calculateDistance(
-        userLocation!,
-        a.location,
-      );
-      final distanceB = CustomDistanceCalculator.calculateDistance(
-        userLocation!,
-        b.location,
-      );
-      return distanceA.compareTo(distanceB);
-    });
-    return filtered;
-  }
-
   void _selectStationFromSearch(Station station) {
     setState(() {
       selectedStation = station;
       searchText = station.name;
     });
     mapController.move(station.location, 17);
-    _showStationInfoBottomSheet(station);
+    _openMockSlotSelection(station);
   }
 
   void _showStationsBottomSheet(List<Station> stations) {
@@ -151,8 +142,8 @@ class _MapContentState extends State<MapContent> {
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(AppSpacing.r20),
+          topRight: Radius.circular(AppSpacing.r20),
         ),
       ),
       builder: (context) => StationsBottomSheet(
@@ -182,7 +173,10 @@ class _MapContentState extends State<MapContent> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => SlotSelectionMockScreen(stationName: station.name),
+        builder: (_) => StationScreen(
+          station: station,
+          onOpenPassesTap: widget.onOpenPassesTap,
+        ),
       ),
     );
 
@@ -198,8 +192,8 @@ class _MapContentState extends State<MapContent> {
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(AppSpacing.r20),
+          topRight: Radius.circular(AppSpacing.r20),
         ),
       ),
       builder: (context) => StationModal(
@@ -281,10 +275,14 @@ class _MapContentState extends State<MapContent> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.location_off, size: 50, color: Colors.red),
-            const SizedBox(height: 12),
-            Text(errorMessage!, style: const TextStyle(fontSize: 14)),
-            const SizedBox(height: 16),
+            const Icon(
+              Icons.location_off,
+              size: AppSpacing.s50,
+              color: AppColors.error,
+            ),
+            const SizedBox(height: AppSpacing.s12),
+            Text(errorMessage!, style: AppTextStyles.body),
+            const SizedBox(height: AppSpacing.md),
             ElevatedButton(
               onPressed: _getLocation,
               child: Text(loc.get('retry')),
@@ -302,8 +300,9 @@ class _MapContentState extends State<MapContent> {
       children: [
         _buildMapView(stations),
         _buildMapControls(),
-        _buildAvailableButton(stations),
+        _buildActionButton(stations),
         _buildSearchOverlay(),
+        _buildRideStatusBanner(),
       ],
     );
   }
@@ -343,7 +342,11 @@ class _MapContentState extends State<MapContent> {
           onTap: () {
             mapController.move(userLocation!, 16);
           },
-          child: const Icon(Icons.my_location, color: Colors.blue, size: 35),
+          child: const Icon(
+            Icons.my_location,
+            color: AppColors.info,
+            size: AppSpacing.s35,
+          ),
         ),
       ),
       // Stations
@@ -370,35 +373,34 @@ class _MapContentState extends State<MapContent> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
+                  padding: AppSpacing.symmetric(
+                    horizontal: AppSpacing.s6,
+                    vertical: AppSpacing.xxs,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(AppSpacing.r10),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.12),
-                        blurRadius: 4,
+                        color: AppColors.withAlpha(AppColors.black, 0.12),
+                        blurRadius: AppSpacing.xs,
                         offset: const Offset(0, 1),
                       ),
                     ],
                   ),
                   child: Text(
                     distanceLabel,
-                    style: const TextStyle(
-                      fontSize: 10,
+                    style: AppTextStyles.caption.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
+                      color: AppColors.gray900,
                     ),
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 Icon(
                   Icons.pedal_bike,
-                  color: isSelected ? Colors.orange : Colors.teal,
-                  size: 35,
+                  color: isSelected ? AppColors.secondary : AppColors.primary,
+                  size: AppSpacing.s35,
                 ),
               ],
             ),
@@ -425,7 +427,7 @@ class _MapContentState extends State<MapContent> {
               );
             },
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           ControlButton(
             icon: Icons.remove,
             onPressed: () {
@@ -435,7 +437,7 @@ class _MapContentState extends State<MapContent> {
               );
             },
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           ControlButton(
             icon: Icons.my_location,
             onPressed: () {
@@ -447,32 +449,44 @@ class _MapContentState extends State<MapContent> {
     );
   }
 
-  Widget _buildAvailableButton(List<Station> stations) {
+  Widget _buildActionButton(List<Station> stations) {
     final loc = AppLocalizations.of(context);
+    final viewModel = context.watch<MapViewModel>();
+    final isReturnMode = viewModel.hasActiveRide;
 
     return Positioned(
-      bottom: 20,
+      bottom: isReturnMode ? 92 : 20,
       right: 20,
       child: GestureDetector(
-        onTap: () => _openNearestStationSlotSelection(stations),
-        onLongPress: () => _showStationsBottomSheet(stations),
+        onTap: isReturnMode
+            ? widget.onQuickReturnTap
+            : () => _openNearestStationSlotSelection(stations),
+        onLongPress: isReturnMode
+            ? null
+            : () => _showStationsBottomSheet(stations),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.teal,
-            borderRadius: BorderRadius.circular(12),
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(AppSpacing.s12),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: AppSpacing.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.near_me, color: Colors.white, size: 24),
-              const SizedBox(width: 12),
+              Icon(
+                isReturnMode ? Icons.assignment_return : Icons.near_me,
+                color: AppColors.white,
+                size: AppSpacing.lg,
+              ),
+              const SizedBox(width: AppSpacing.s12),
               Text(
-                loc.get('quickSelect'),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                isReturnMode ? 'Quick Return' : loc.get('quickSelect'),
+                style: AppTextStyles.body.copyWith(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
@@ -490,7 +504,7 @@ class _MapContentState extends State<MapContent> {
 
     return MapSearchOverlay(
       onProfileTap: widget.onProfileTap,
-      stations: _getAllStationsSortedByDistance(stations),
+      stations: _getAvailableStationsSortedByDistance(stations),
       userLocation: userLocation,
       onStationSelected: _selectStationFromSearch,
       onSearchChanged: (value) {
@@ -498,6 +512,48 @@ class _MapContentState extends State<MapContent> {
           searchText = value;
         });
       },
+    );
+  }
+
+  Widget _buildRideStatusBanner() {
+    final viewModel = context.watch<MapViewModel>();
+    if (!viewModel.hasActiveRide) {
+      return const SizedBox.shrink();
+    }
+
+    return Positioned(
+      left: 12,
+      right: 12,
+      bottom: 20,
+      child: Container(
+        padding: AppSpacing.symmetric(
+          horizontal: AppSpacing.s14,
+          vertical: AppSpacing.s10,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.withAlpha(AppColors.secondary, 0.95),
+          borderRadius: BorderRadius.circular(AppSpacing.s12),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.pedal_bike,
+              color: AppColors.white,
+              size: AppSpacing.s18,
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                'You are currently holding a bike. Return it before booking another one.',
+                style: AppTextStyles.body.copyWith(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

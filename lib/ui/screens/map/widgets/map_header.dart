@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
+import 'package:velo_pp/core/theme/app_colors.dart';
+import 'package:velo_pp/core/theme/app_spacing.dart';
+import 'package:velo_pp/core/theme/app_text_styles.dart';
 import 'package:velo_pp/ui/widgets/language_toggle.dart';
+
 class MapHeader extends StatelessWidget {
   final Function(Locale) onLocaleChange;
   final String currentLanguage;
@@ -22,8 +26,13 @@ class MapHeader extends StatelessWidget {
       left: 0,
       right: 0,
       child: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        color: AppColors.surface,
+        padding: AppSpacing.fromLTRB(
+          AppSpacing.md,
+          AppSpacing.s12,
+          AppSpacing.md,
+          AppSpacing.s12,
+        ),
         child: SafeArea(
           bottom: false,
           child: Column(
@@ -34,10 +43,8 @@ class MapHeader extends StatelessWidget {
                 children: [
                   Text(
                     loc.get('appTitle'),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal,
+                    style: AppTextStyles.title.copyWith(
+                      color: AppColors.primary,
                     ),
                   ),
                   LanguageToggle(
@@ -46,7 +53,7 @@ class MapHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.s12),
               SearchBar(
                 onChanged: onSearchChanged,
                 hintText: loc.get('searchHint'),
