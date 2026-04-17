@@ -155,6 +155,13 @@ class MockData {
 
   static final List<PassDto> passes = [
     const PassDto(
+      id: 'single_pass',
+      name: 'Single Pass',
+      price: 1,
+      durationHours: 24,
+      features: ['Oneway rides'],
+    ),
+    const PassDto(
       id: 'pass_day',
       name: 'Day Pass',
       price: 5.0,
@@ -173,8 +180,12 @@ class MockData {
       name: 'Annual Pass',
       price: 120.0,
       durationHours: 8760,
-      features: ['Unlimited rides', 'Priority bike access', 'Free bike parking', 'Priority support'],
-      
+      features: [
+        'Unlimited rides',
+        'Priority bike access',
+        'Free bike parking',
+        'Priority support',
+      ],
     ),
   ];
 
@@ -187,7 +198,6 @@ class MockData {
       endDate: DateTime.now().add(const Duration(days: 20)),
       isActive: true,
     ),
-   
   ];
 
   static final List<BookingDto> bookings = [
@@ -195,8 +205,8 @@ class MockData {
       id: 'bk_001',
       userId: 'user_001',
       bikeId: 'bike_001',
-      startStationId: 'st_eden',
-      endStationId: 'st_central',
+      startStationId: 'st_01',
+      endStationId: 'st_02',
       status: 'active',
       paymentMethod: 'wallet',
       timeToPickup: DateTime.now().add(const Duration(minutes: 15)),
@@ -206,8 +216,8 @@ class MockData {
       id: 'bk_002',
       userId: 'user_001',
       bikeId: 'bike_004',
-      startStationId: 'st_central',
-      endStationId: 'st_riverside',
+      startStationId: 'st_02',
+      endStationId: 'st_03',
       status: 'completed',
       paymentMethod: 'card',
       timeToPickup: DateTime.now().subtract(const Duration(days: 1)),
