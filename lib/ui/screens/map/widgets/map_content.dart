@@ -9,10 +9,11 @@ import 'package:velo_pp/services/location_service.dart';
 import 'package:velo_pp/services/station_service.dart';
 import 'package:velo_pp/ui/screens/map/view_model/map_view_model.dart';
 import 'package:velo_pp/ui/widgets/control_button.dart';
-import 'package:velo_pp/ui/screens/map/widgets/station_modal.dart';
 import 'package:velo_pp/ui/screens/map/widgets/stations_bottom_sheet.dart';
 import 'package:velo_pp/ui/screens/map/widgets/map_search_overlay.dart';
+import 'package:velo_pp/ui/screens/map/widgets/station_modal.dart';
 import 'package:velo_pp/core/utils/distance_calculator.dart';
+import 'package:velo_pp/ui/screens/slot_selection_mock_screen.dart';
 
 class MapContent extends StatefulWidget {
   final VoidCallback onProfileTap;
@@ -24,12 +25,15 @@ class MapContent extends StatefulWidget {
 }
 
 class _MapContentState extends State<MapContent> {
+  static const double _fastestClickMaxDistanceMeters = 100;
+
   late MapController mapController;
   LatLng? userLocation;
   String? errorMessage;
   Station? selectedStation;
   String searchText = '';
   List<Station> nearbyMockStations = const [];
+  bool _isNavigatingToSlotSelection = false;
 
   @override
   void initState() {
@@ -70,11 +74,15 @@ class _MapContentState extends State<MapContent> {
 
   void _loadStations(LatLng location) {
     final viewModel = context.read<MapViewModel>();
+    final stationGeographyService = context.read<StationGeographyService>();
     final loc = AppLocalizations.of(context);
     setState(() {
       userLocation = location;
       errorMessage = null;
-      nearbyMockStations = StationService.generateStations(location, loc);
+      nearbyMockStations = stationGeographyService.generateStations(
+        location,
+        loc,
+      );
     });
     viewModel.loadStations();
   }
@@ -85,6 +93,55 @@ class _MapContentState extends State<MapContent> {
         .toList();
 
     return StationService.filterStations(availableStations, searchText);
+  }
+
+  List<Station> _getAvailableStationsSortedByDistance(List<Station> stations) {
+    final filtered = _getFilteredStations(stations);
+    if (userLocation == null) {
+      return filtered;
+    }
+
+    filtered.sort((a, b) {
+      final distanceA = CustomDistanceCalculator.calculateDistance(
+        userLocation!,
+        a.location,
+      );
+      final distanceB = CustomDistanceCalculator.calculateDistance(
+        userLocation!,
+        b.location,
+      );
+      return distanceA.compareTo(distanceB);
+    });
+    return filtered;
+  }
+
+  List<Station> _getAllStationsSortedByDistance(List<Station> stations) {
+    final filtered = StationService.filterStations(stations, searchText);
+    if (userLocation == null) {
+      return filtered;
+    }
+
+    filtered.sort((a, b) {
+      final distanceA = CustomDistanceCalculator.calculateDistance(
+        userLocation!,
+        a.location,
+      );
+      final distanceB = CustomDistanceCalculator.calculateDistance(
+        userLocation!,
+        b.location,
+      );
+      return distanceA.compareTo(distanceB);
+    });
+    return filtered;
+  }
+
+  void _selectStationFromSearch(Station station) {
+    setState(() {
+      selectedStation = station;
+      searchText = station.name;
+    });
+    mapController.move(station.location, 17);
+    _showStationInfoBottomSheet(station);
   }
 
   void _showStationsBottomSheet(List<Station> stations) {
@@ -109,34 +166,106 @@ class _MapContentState extends State<MapContent> {
           });
           mapController.move(station.location, 17);
           Navigator.pop(context);
-          _showStationOverlay(station);
+          _openMockSlotSelection(station);
         },
       ),
     );
   }
 
-  void _showStationModal(Station station) {
+  Future<void> _openMockSlotSelection(Station station) async {
+    if (_isNavigatingToSlotSelection || !mounted) return;
+
+    setState(() {
+      _isNavigatingToSlotSelection = true;
+    });
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SlotSelectionMockScreen(stationName: station.name),
+      ),
+    );
+
+    if (!mounted) return;
+    setState(() {
+      _isNavigatingToSlotSelection = false;
+    });
+  }
+
+  void _showStationInfoBottomSheet(Station station) {
     showModalBottomSheet(
       context: context,
-      builder: (context) =>
-          StationModal(station: station, userLocation: userLocation!),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (context) => StationModal(
+        station: station,
+        userLocation: userLocation!,
+        onSelect: () => _openMockSlotSelection(station),
+      ),
     );
   }
 
-  void _showStationOverlay(Station station) {
+  String _formatDistanceForDisplay(double distanceMeters) {
     final loc = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${station.name} • ${station.bikes} ${loc.get('bikes')}',
-          style: const TextStyle(color: Colors.white, fontSize: 16),
-        ),
-        backgroundColor: Colors.teal,
-        duration: const Duration(seconds: 3),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(20),
-      ),
+    if (distanceMeters < 1000) {
+      return '${distanceMeters.round()} ${loc.get('m')}';
+    }
+    return '${(distanceMeters / 1000).toStringAsFixed(2)} ${loc.get('km')}';
+  }
+
+  Station? _getNearestStation(List<Station> stations) {
+    if (userLocation == null) return null;
+
+    final availableStations = _getFilteredStations(stations);
+    if (availableStations.isEmpty) return null;
+
+    final from = userLocation!;
+    return availableStations.reduce((nearest, current) {
+      final nearestDistance = CustomDistanceCalculator.calculateDistance(
+        from,
+        nearest.location,
+      );
+      final currentDistance = CustomDistanceCalculator.calculateDistance(
+        from,
+        current.location,
+      );
+      return currentDistance < nearestDistance ? current : nearest;
+    });
+  }
+
+  void _openNearestStationSlotSelection(List<Station> stations) {
+    final loc = AppLocalizations.of(context);
+    final nearestStation = _getNearestStation(stations);
+    if (nearestStation == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.get('noStationsAvailable'))));
+      return;
+    }
+
+    final distanceToNearest = CustomDistanceCalculator.calculateDistance(
+      userLocation!,
+      nearestStation.location,
     );
+
+    if (distanceToNearest > _fastestClickMaxDistanceMeters) {
+      final formattedDistance = _formatDistanceForDisplay(distanceToNearest);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${loc.get('tooFarForFastest')} ($formattedDistance). ${loc.get('fastestRangeHint')}',
+          ),
+        ),
+      );
+      return;
+    }
+
+    _openMockSlotSelection(nearestStation);
   }
 
   @override
@@ -224,7 +353,7 @@ class _MapContentState extends State<MapContent> {
           userLocation!,
           station.location,
         );
-        final distanceKm = CustomDistanceCalculator.formatDistance(distance);
+        final distanceLabel = _formatDistanceForDisplay(distance);
 
         return Marker(
           point: station.location,
@@ -235,7 +364,7 @@ class _MapContentState extends State<MapContent> {
               setState(() {
                 selectedStation = station;
               });
-              _showStationModal(station);
+              _showStationInfoBottomSheet(station);
             },
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -257,7 +386,7 @@ class _MapContentState extends State<MapContent> {
                     ],
                   ),
                   child: Text(
-                    '$distanceKm km',
+                    distanceLabel,
                     style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
@@ -325,7 +454,8 @@ class _MapContentState extends State<MapContent> {
       bottom: 20,
       right: 20,
       child: GestureDetector(
-        onTap: () => _showStationsBottomSheet(stations),
+        onTap: () => _openNearestStationSlotSelection(stations),
+        onLongPress: () => _showStationsBottomSheet(stations),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.teal,
@@ -335,14 +465,14 @@ class _MapContentState extends State<MapContent> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.pedal_bike, color: Colors.white, size: 28),
+              const Icon(Icons.near_me, color: Colors.white, size: 24),
               const SizedBox(width: 12),
               Text(
-                loc.get('available'),
+                loc.get('quickSelect'),
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 15,
                 ),
               ),
             ],
@@ -353,8 +483,16 @@ class _MapContentState extends State<MapContent> {
   }
 
   Widget _buildSearchOverlay() {
+    final viewModel = context.watch<MapViewModel>();
+    final stations = nearbyMockStations.isNotEmpty
+        ? nearbyMockStations
+        : (viewModel.stations.data ?? []);
+
     return MapSearchOverlay(
       onProfileTap: widget.onProfileTap,
+      stations: _getAllStationsSortedByDistance(stations),
+      userLocation: userLocation,
+      onStationSelected: _selectStationFromSearch,
       onSearchChanged: (value) {
         setState(() {
           searchText = value;

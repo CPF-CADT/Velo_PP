@@ -10,11 +10,13 @@ import 'package:velo_pp/ui/screens/station/station_screen.dart';
 class StationModal extends StatelessWidget {
   final Station station;
   final LatLng userLocation;
+  final VoidCallback? onSelect;
 
   const StationModal({
     super.key,
     required this.station,
     required this.userLocation,
+    this.onSelect,
   });
 
   @override
@@ -105,7 +107,7 @@ class StationModal extends StatelessWidget {
                 );
               },
               child: Text(
-                loc.get('navigate'),
+                loc.get('select'),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

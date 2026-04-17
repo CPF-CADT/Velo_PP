@@ -2,71 +2,128 @@ import 'package:latlong2/latlong.dart';
 import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
 
-class StationService {
-  /// Generate mock stations around user location
-  static List<Station> generateStations(
-    LatLng userLocation,
-    AppLocalizations loc,
-  ) {
+abstract class StationGeographyService {
+  const StationGeographyService();
+
+  List<Station> generateStations(LatLng userLocation, AppLocalizations loc);
+}
+
+class MockStationGeographyService implements StationGeographyService {
+  const MockStationGeographyService();
+
+  @override
+  List<Station> generateStations(LatLng userLocation, AppLocalizations loc) {
     return [
       Station(
-        id: 'st_05',
-        name: loc.get('station05'),
+        id: 'st_eden',
+        name: 'Eden Garden Station',
         location: LatLng(
-          userLocation.latitude - 0.002,
-          userLocation.longitude + 0.003,
+          userLocation.latitude + 0.00045,
+          userLocation.longitude,
         ),
         capacity: 12,
-        bikesAvailable: 8,
-        address: loc.get('greenpark'),
+        bikesAvailable: 4,
+        address: 'Eden Garden',
       ),
       Station(
-        id: 'st_08',
-        name: loc.get('station08'),
+        id: 'st_central',
+        name: 'Central Market Station',
         location: LatLng(
           userLocation.latitude + 0.003,
           userLocation.longitude + 0.002,
         ),
         capacity: 16,
-        bikesAvailable: 12,
-        address: loc.get('downtowncenter'),
+        bikesAvailable: 7,
+        address: 'Phsar Thmei',
       ),
       Station(
-        id: 'st_04',
-        name: loc.get('station04'),
+        id: 'st_riverside',
+        name: 'Riverside Station',
         location: LatLng(
           userLocation.latitude + 0.001,
           userLocation.longitude - 0.004,
         ),
         capacity: 10,
-        bikesAvailable: 5,
-        address: loc.get('mainstreet'),
+        bikesAvailable: 3,
+        address: 'Sisowath Quay',
       ),
       Station(
-        id: 'st_13',
-        name: loc.get('station13'),
+        id: 'st_university',
+        name: 'University Station',
         location: LatLng(
           userLocation.latitude - 0.004,
           userLocation.longitude - 0.002,
         ),
         capacity: 14,
-        bikesAvailable: 10,
-        address: loc.get('westdistrict'),
+        bikesAvailable: 6,
+        address: 'Russian Blvd',
       ),
       Station(
-        id: 'st_10',
-        name: loc.get('station10'),
+        id: 'st_nightmarket',
+        name: 'Night Market Station',
         location: LatLng(
           userLocation.latitude - 0.001,
           userLocation.longitude + 0.005,
         ),
-        capacity: 12,
-        bikesAvailable: 6,
-        address: loc.get('eastmarket'),
+        capacity: 8,
+        bikesAvailable: 2,
+        address: 'Night Market',
       ),
     ];
   }
+}
 
+class RealStationGeographyService implements StationGeographyService {
+  const RealStationGeographyService();
+
+  @override
+  List<Station> generateStations(LatLng userLocation, AppLocalizations loc) {
+    return [
+      Station(
+        id: 'st_eden',
+        name: 'Eden Garden Station',
+        location: const LatLng(11.5622, 104.9152),
+        capacity: 12,
+        bikesAvailable: 4,
+        address: 'Eden Garden',
+      ),
+      Station(
+        id: 'st_central',
+        name: 'Central Market Station',
+        location: const LatLng(11.5695, 104.9210),
+        capacity: 16,
+        bikesAvailable: 7,
+        address: 'Phsar Thmei',
+      ),
+      Station(
+        id: 'st_riverside',
+        name: 'Riverside Station',
+        location: const LatLng(11.5735, 104.9292),
+        capacity: 10,
+        bikesAvailable: 3,
+        address: 'Sisowath Quay',
+      ),
+      Station(
+        id: 'st_university',
+        name: 'University Station',
+        location: const LatLng(11.5529, 104.9166),
+        capacity: 14,
+        bikesAvailable: 6,
+        address: 'Russian Blvd',
+      ),
+      Station(
+        id: 'st_nightmarket',
+        name: 'Night Market Station',
+        location: const LatLng(11.5754, 104.9263),
+        capacity: 8,
+        bikesAvailable: 2,
+        address: 'Night Market',
+      ),
+    ];
+  }
+}
+
+class StationService {
   /// Filter stations by search query
   static List<Station> filterStations(List<Station> stations, String query) {
     if (query.isEmpty) return stations;

@@ -4,12 +4,18 @@ class CustomSearchBar extends StatefulWidget {
   final Function(String) onChanged;
   final String hintText;
   final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final ValueChanged<bool>? onFocusChanged;
+  final bool removeBottomRadius;
 
   const CustomSearchBar({
     super.key,
     required this.onChanged,
     required this.hintText,
     this.controller,
+    this.focusNode,
+    this.onFocusChanged,
+    this.removeBottomRadius = false,
   });
 
   @override
@@ -18,31 +24,43 @@ class CustomSearchBar extends StatefulWidget {
 
 class _CustomSearchBarState extends State<CustomSearchBar> {
   late FocusNode _focusNode;
+  late bool _ownsFocusNode;
   bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
+    _ownsFocusNode = widget.focusNode == null;
+    _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(() {
       setState(() {
         _isFocused = _focusNode.hasFocus;
       });
+      widget.onFocusChanged?.call(_focusNode.hasFocus);
     });
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    if (_ownsFocusNode) {
+      _focusNode.dispose();
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final borderRadius = widget.removeBottomRadius
+        ? const BorderRadius.only(
+            topLeft: Radius.circular(28),
+            topRight: Radius.circular(28),
+          )
+        : BorderRadius.circular(28);
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: borderRadius,
         border: Border.all(
           color: _isFocused ? Colors.teal : Colors.grey[300]!,
           width: 1.5,

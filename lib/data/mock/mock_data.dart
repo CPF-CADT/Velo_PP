@@ -159,18 +159,22 @@ class MockData {
       name: 'Day Pass',
       price: 5.0,
       durationHours: 24,
+      features: ['Unlimited 30-min rides'],
     ),
     const PassDto(
       id: 'pass_month',
       name: 'Monthly Pass',
       price: 25.0,
       durationHours: 720,
+      features: ['Unlimited 60min rides', 'Priority Bike Access'],
     ),
     const PassDto(
       id: 'pass_year',
       name: 'Annual Pass',
       price: 120.0,
       durationHours: 8760,
+      features: ['Unlimited rides', 'Priority bike access', 'Free bike parking', 'Priority support'],
+      
     ),
   ];
 
@@ -180,9 +184,10 @@ class MockData {
       userId: 'user_001',
       passId: 'pass_month',
       startDate: DateTime.now().subtract(const Duration(days: 10)),
-      endDate: DateTime.now().add(const Duration(days: 20)),
+      endDate: DateTime.now().add(const Duration(days: -1)),
       isActive: true,
     ),
+   
   ];
 
   static final List<BookingDto> bookings = [
