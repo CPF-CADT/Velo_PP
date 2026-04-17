@@ -8,6 +8,7 @@ import 'package:velo_pp/l10n/app_localizations.dart';
 import 'package:velo_pp/services/location_service.dart';
 import 'package:velo_pp/services/station_service.dart';
 import 'package:velo_pp/ui/screens/map/view_model/map_view_model.dart';
+import 'package:velo_pp/ui/screens/station/station_screen.dart';
 import 'package:velo_pp/ui/widgets/control_button.dart';
 import 'package:velo_pp/ui/screens/map/widgets/stations_bottom_sheet.dart';
 import 'package:velo_pp/ui/screens/map/widgets/map_search_overlay.dart';
@@ -177,6 +178,11 @@ class _MapContentState extends State<MapContent> {
     setState(() {
       _isNavigatingToSlotSelection = true;
     });
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => StationScreen(station: station)),
+    );
 
     if (!mounted) return;
     setState(() {
