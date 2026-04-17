@@ -14,8 +14,9 @@ class PassesScreen extends StatelessWidget {
       create: (context) => PassesViewModel(
         authRepository: context.read<AuthRepository>(),
         passesRepository: context.read<PassesRepository>(),
-      )..loadPasses(),
+      ),
       child: const PassContent(),
+    
     );
   }
 }

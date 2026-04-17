@@ -37,7 +37,10 @@ class PassesViewModel extends ChangeNotifier {
     required AuthRepository authRepository,
     required PassesRepository passesRepository,
   }) : _authRepository = authRepository,
-       _passesRepository = passesRepository;
+       _passesRepository = passesRepository{
+        loadPasses();
+       }
+       
 
   Future<void> loadPasses() async {
     passes = AsyncValue.loading();
@@ -57,13 +60,13 @@ class PassesViewModel extends ChangeNotifier {
     notifyListeners();
   }
   // buy pass
-  Future<void> buyPass(String passId) async{
+  Future<void> buyPass(String passId, {bool addDuration = false}) async{
     _buyingPassId = passId;  // store the purchase pass
     notifyListeners();   
 
     try{
       final user = _authRepository.currentUser;
-      await _passesRepository.purchasePass(user.id, passId);  // create new pass
+      await _passesRepository.purchasePass(user.id, passId, addDuration);  // create new pass
 
       await loadPasses();  // refresh the data to show new pass 
 
@@ -85,7 +88,7 @@ class PassesViewModel extends ChangeNotifier {
       activePass = passes.data?.activePass; // get current active pass
     }
     if(activePass != null && activePass.passId == passId){
-      return activePass.isExpired ? PassStatus.expired : PassStatus.active;  //
+      return activePass.isExpired ? PassStatus.expired : PassStatus.active;  
     }
     return PassStatus.available;
   }
@@ -93,7 +96,7 @@ class PassesViewModel extends ChangeNotifier {
   int? getActiveDaysRemaining(){
     if(passes.state == AsyncValueState.success) {
     final active = passes.data?.activePass; // get current active pass
-    if(active == null || active.isExpired) return null;  //
+    if(active == null || active.isExpired) return null;  
         return active.remainingDays; // return the day remaining  
     }
     return null;
