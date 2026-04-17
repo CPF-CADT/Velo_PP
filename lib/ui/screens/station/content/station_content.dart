@@ -6,7 +6,7 @@ import 'package:velo_pp/core/utils/async_value.dart';
 import 'package:velo_pp/model/dock.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
 
-class StationContent extends StatelessWidget {
+class StationContent extends StatefulWidget {
   final String stationId;
   final String stationName;
 
@@ -17,20 +17,26 @@ class StationContent extends StatelessWidget {
   });
 
   @override
+  State<StationContent> createState() => _StationContentState();
+}
+
+class _StationContentState extends State<StationContent> {
+  Dock? _lastReleasedBike;
+
+  @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
 
     return Consumer<StationViewModel>(
       builder: (context, viewModel, _) {
-        // Load slots on first build
         if (viewModel.slots.state == AsyncValueState.loading) {
-          Future.microtask(() => viewModel.loadSlots(stationId));
+          Future.microtask(() => viewModel.loadSlots(widget.stationId));
         }
 
         if (viewModel.slots.state == AsyncValueState.loading) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(stationName),
+              title: Text("stationName"),
               backgroundColor: Colors.teal,
               centerTitle: true,
               elevation: 0,
@@ -44,7 +50,7 @@ class StationContent extends StatelessWidget {
         if (viewModel.slots.state == AsyncValueState.error) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(stationName),
+              title: Text(widget.stationName),
               backgroundColor: Colors.teal,
               centerTitle: true,
               elevation: 0,
@@ -65,7 +71,7 @@ class StationContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => viewModel.loadSlots(stationId),
+                    onPressed: () => viewModel.loadSlots(widget.stationId),
                     child: Text(loc.get('retry')),
                   ),
                 ],
@@ -75,10 +81,12 @@ class StationContent extends StatelessWidget {
         }
 
         final slots = viewModel.slots.data ?? [];
+        final availableSlots = slots.where((slot) => slot.status == 'available').length;
+        final occupiedSlots = slots.where((slot) => slot.status == 'occupied').length;
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(stationName),
+            title: Text(widget.stationName),
             backgroundColor: Colors.teal,
             centerTitle: true,
             elevation: 0,
@@ -88,20 +96,127 @@ class StationContent extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Header section
                 Text(
-                  loc.get('availableSlots'),
+                  'Current Selection',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  widget.stationName,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
+                
+                // Live Dock Status section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Bike Occupied',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            if (_lastReleasedBike != null) ...[const SizedBox(width: 12),
+                              InkWell(
+                                onTap: () {
+                                  viewModel.updateSlotStatus(_lastReleasedBike!.id, 'occupied');
+                                  setState(() => _lastReleasedBike = null);
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red[100],
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.undo, size: 14, color: Colors.red[700]),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Undo',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.red[700],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '$occupiedSlots ${loc.get('bikes')}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Available Slots',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.teal,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '$availableSlots ${loc.get('slots')}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                
+                // Slots list
                 Expanded(
                   child: SlotsGrid(
                     slots: slots,
                     onSlotTap: (dockId) {
                       _showSlotDetails(context, dockId, viewModel, slots);
                     },
+                    onSlotDismiss: (dock) {
+                      // Update state immediately
+                      setState(() => _lastReleasedBike = dock);
+                      
+                      // Remove from viewModel's slots list immediately for UI
+                      viewModel.removeDockFromList(dock.id);
+                      
+                      // Update dock status in background
+                      viewModel.updateSlotStatus(dock.id, 'available');
+                    },
+                    lastReleasedBike: _lastReleasedBike,
                   ),
                 ),
               ],

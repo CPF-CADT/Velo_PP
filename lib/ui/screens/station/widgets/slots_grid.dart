@@ -5,11 +5,15 @@ import 'slot_card.dart';
 class SlotsGrid extends StatelessWidget {
   final List<Dock> slots;
   final Function(String) onSlotTap;
+  final Function(Dock)? onSlotDismiss;
+  final Dock? lastReleasedBike;
 
   const SlotsGrid({
     super.key,
     required this.slots,
     required this.onSlotTap,
+    this.onSlotDismiss,
+    this.lastReleasedBike,
   });
 
   @override
@@ -45,6 +49,8 @@ class SlotsGrid extends StatelessWidget {
         return SlotCard(
           slot: slot,
           onTap: () => onSlotTap(slot.id),
+          onDismiss: onSlotDismiss,
+          lastReleasedBike: lastReleasedBike,
         );
       },
     );

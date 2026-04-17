@@ -38,4 +38,12 @@ class StationViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void removeDockFromList(String dockId) {
+    if (slots.state == AsyncValueState.success && slots.data != null) {
+      final updatedSlots = slots.data!.where((dock) => dock.id != dockId).toList();
+      slots = AsyncValue.success(updatedSlots);
+      notifyListeners();
+    }
+  }
 }

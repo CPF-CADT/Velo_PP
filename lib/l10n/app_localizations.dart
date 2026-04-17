@@ -94,6 +94,9 @@ class AppLocalizations {
     'westdistrict': {'en': 'West District', 'km': 'លិច'},
     'station10': {'en': 'Station 10', 'km': 'ស្ថានីយ ១០'},
     'eastmarket': {'en': 'East Market', 'km': 'កើត'},
+
+    'total': {'en': 'Total', 'km': 'សរុប'},
+
     'dayPass': {'en': 'Day Pass', 'km': 'កញ្ចប់ប្រចាំថ្ងៃ'},
     'monthlyPass': {'en': 'Monthly Pass', 'km': 'កញ្ចប់ប្រចាំខែ'},
     'annualPass': {'en': 'Annual Pass', 'km': 'កញ្ចប់ប្រចាំឆ្នាំ'},
@@ -103,6 +106,7 @@ class AppLocalizations {
     'unlimitedRides': {'en': 'Unlimited rides', 'km': 'ការជិះដែលគ្មានដែនកំណត់'},
     'freeBikeParking': {'en': 'Free bike parking', 'km': 'ការផ្ដល់ទីចំណតកង់ដោយឥតគិតថ្លៃ'},
     'prioritySupport': {'en': 'Priority support', 'km': 'ការគាំទ្រពេញលេញ'},
+
   };
 
   String get(String key) {
