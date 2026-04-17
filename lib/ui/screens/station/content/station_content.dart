@@ -131,36 +131,6 @@ class _StationContentState extends State<StationContent> {
                                 color: Colors.grey[700],
                               ),
                             ),
-                            if (_lastReleasedBike != null) ...[const SizedBox(width: 12),
-                              InkWell(
-                                onTap: () {
-                                  viewModel.updateSlotStatus(_lastReleasedBike!.id, 'occupied');
-                                  setState(() => _lastReleasedBike = null);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red[100],
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.undo, size: 14, color: Colors.red[700]),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        'Undo',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.red[700],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
                           ],
                         ),
                         const SizedBox(height: 4),

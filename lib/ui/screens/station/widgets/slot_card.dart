@@ -31,7 +31,7 @@ class SlotCard extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: const Text(
-                    'You can only use one bike at a time. Undo the previous bike first.',
+                    'You can only use one bike at a time.',
                   ),
                   duration: const Duration(seconds: 3),
                   backgroundColor: Colors.red[700],
