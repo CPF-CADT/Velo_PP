@@ -46,7 +46,7 @@ class RidesViewModel extends ChangeNotifier {
 
     try {
       final user = _authRepository.currentUser;
-      final bookings = _bookingsRepository.getBookingsForUser(user.id);
+      final bookings = await _bookingsRepository.getBookingsForUser(user.id);
       final summaries = bookings
           .map(
             (booking) => RideSummary(

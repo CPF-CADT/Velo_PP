@@ -4,7 +4,8 @@ import 'package:velo_pp/data/repositories/auth/mock_auth_repository.dart';
 import 'package:velo_pp/data/repositories/bikes/bikes_repository.dart';
 import 'package:velo_pp/data/repositories/bikes/mock_bikes_repository.dart';
 import 'package:velo_pp/data/repositories/bookings/bookings_repository.dart';
-import 'package:velo_pp/data/repositories/bookings/mock_bookings_repository.dart';
+// import 'package:velo_pp/data/repositories/bookings/mock_bookings_repository.dart';
+import 'package:velo_pp/data/repositories/bookings/mock_bookingsfirebase_repository.dart';
 import 'package:velo_pp/data/repositories/dock/dock_repository.dart';
 import 'package:velo_pp/data/repositories/dock/mock_dock_repository.dart';
 import 'package:velo_pp/data/repositories/passes/passes_repository.dart';
@@ -33,7 +34,7 @@ List<InheritedProvider> get devProviders {
       create: (_) => MockPassesRepository(),
     ),
     ChangeNotifierProvider<BookingsRepository>(
-      create: (_) => MockBookingsRepository(),
+      create: (_) => FirebaseBookingsRepository(),
     ),
     ChangeNotifierProvider<DockRepository>(
       create: (_) => MockDockRepository(),
