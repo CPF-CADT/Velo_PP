@@ -70,7 +70,9 @@ class AppLocalizations {
     'noRidesYet': {'en': 'No rides yet', 'km': 'មិនមានការជិះនៅឡើយ'},
     'location': {'en': 'Location', 'km': 'ទីតាំង'},
     'bikesAvailable': {'en': 'bikes available', 'km': 'ម៉ូតូកង់ដែលមាន'},
-    'm': {'en': 'm', 'km': 'ម៉'},
+    'slots': {'en': 'slots', 'km': 'ចំណត'},
+    'availableSlots': {'en': 'Available Slots', 'km': 'ចំណតម៉ូតូកង់ដែលមាន'},
+    'slot': {'en': 'Slot', 'km': 'ចំណត'},
     'km': {'en': 'km', 'km': 'គ.ម'},
     'tooFarForFastest': {
       'en': 'Too far for fastest station selection',

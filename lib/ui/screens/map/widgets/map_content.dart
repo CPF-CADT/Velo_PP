@@ -145,6 +145,7 @@ class _MapContentState extends State<MapContent> {
   }
 
   void _showStationsBottomSheet(List<Station> stations) {
+    final viewModel = context.read<MapViewModel>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -158,6 +159,7 @@ class _MapContentState extends State<MapContent> {
         stations: _getFilteredStations(stations),
         selectedStation: selectedStation,
         userLocation: userLocation!,
+        availableSlotsByStation: viewModel.getAvailableSlotsMap(),
         onStationSelected: (station) {
           setState(() {
             selectedStation = station;

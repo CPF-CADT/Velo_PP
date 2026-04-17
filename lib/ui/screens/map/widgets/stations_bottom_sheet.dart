@@ -3,12 +3,14 @@ import 'package:latlong2/latlong.dart' show LatLng;
 import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/core/utils/distance_calculator.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
+import 'package:velo_pp/ui/screens/station/station_screen.dart';
 
 class StationsBottomSheet extends StatelessWidget {
   final List<Station> stations;
   final Station? selectedStation;
   final LatLng userLocation;
   final Function(Station) onStationSelected;
+  final Map<String, int> availableSlotsByStation;
 
   const StationsBottomSheet({
     super.key,
@@ -16,6 +18,7 @@ class StationsBottomSheet extends StatelessWidget {
     required this.selectedStation,
     required this.userLocation,
     required this.onStationSelected,
+    required this.availableSlotsByStation,
   });
 
   @override
@@ -80,13 +83,22 @@ class StationsBottomSheet extends StatelessWidget {
               itemBuilder: (context, index) {
                 final station = stations[index];
                 final isSelected = selectedStation?.name == station.name;
+                final availableSlots = availableSlotsByStation[station.id] ?? 0;
 
                 return GestureDetector(
                   onTap: () {
-                    onStationSelected(station);
                     Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StationScreen(
+                          stationId: station.id,
+                          stationName: station.name,
+                        ),
+                      ),
+                    );
                   },
-                  child: _buildStationCard(station, isSelected, loc),
+                  child: _buildStationCard(station, isSelected, loc, availableSlots),
                 );
               },
             ),
@@ -101,6 +113,7 @@ class StationsBottomSheet extends StatelessWidget {
     Station station,
     bool isSelected,
     AppLocalizations loc,
+    int availableSlots,
   ) {
     final distance = CustomDistanceCalculator.calculateDistance(
       userLocation,
@@ -140,7 +153,7 @@ class StationsBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${station.bikes} ${loc.get('bikes')} • ${station.address}',
+                  '${station.bikes} ${loc.get('bikes')} • $availableSlots ${loc.get('slots')} • ${station.address}',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],

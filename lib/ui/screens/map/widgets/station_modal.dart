@@ -5,6 +5,7 @@ import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/core/utils/distance_calculator.dart';
 import 'package:velo_pp/data/repositories/bikes/bikes_repository.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
+import 'package:velo_pp/ui/screens/station/station_screen.dart';
 
 class StationModal extends StatelessWidget {
   final Station station;
@@ -95,17 +96,13 @@ class StationModal extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.pop(context);
-                if (onSelect != null) {
-                  onSelect!();
-                  return;
-                }
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '${loc.get('navigateToStation')} ${station.name}...',
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StationScreen(
+                      stationId: station.id,
+                      stationName: station.name,
                     ),
-                    duration: const Duration(seconds: 2),
                   ),
                 );
               },
