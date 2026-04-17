@@ -92,8 +92,7 @@ class StationsBottomSheet extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => StationScreen(
-                          stationId: station.id,
-                          stationName: station.name,
+                          station: station,
                         ),
                       ),
                     );

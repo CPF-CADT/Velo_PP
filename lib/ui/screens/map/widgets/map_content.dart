@@ -13,7 +13,6 @@ import 'package:velo_pp/ui/screens/map/widgets/stations_bottom_sheet.dart';
 import 'package:velo_pp/ui/screens/map/widgets/map_search_overlay.dart';
 import 'package:velo_pp/ui/screens/map/widgets/station_modal.dart';
 import 'package:velo_pp/core/utils/distance_calculator.dart';
-import 'package:velo_pp/ui/screens/slot_selection_mock_screen.dart';
 
 class MapContent extends StatefulWidget {
   final VoidCallback onProfileTap;
@@ -178,13 +177,6 @@ class _MapContentState extends State<MapContent> {
     setState(() {
       _isNavigatingToSlotSelection = true;
     });
-
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SlotSelectionMockScreen(stationName: station.name),
-      ),
-    );
 
     if (!mounted) return;
     setState(() {
