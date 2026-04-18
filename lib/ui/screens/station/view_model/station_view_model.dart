@@ -127,6 +127,7 @@ class StationViewModel extends ChangeNotifier {
   Future<Booking> bookSelectedBike({String? purchasePassId}) async {
     final stationId = _currentStationId;
     final dock = selectedDock;
+    final isSingleTicket = purchasePassId == 'single_pass';
 
     if (stationId == null) {
       throw Exception('Station is not loaded');
@@ -142,7 +143,7 @@ class StationViewModel extends ChangeNotifier {
     }
 
     final userId = _authRepository.currentUser.id;
-    if (!hasActivePass) {
+    if (!hasActivePass && !isSingleTicket) {
       if (purchasePassId == null) {
         throw const PassRequiredException();
       }
