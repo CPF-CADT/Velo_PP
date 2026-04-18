@@ -12,6 +12,7 @@ class FirebasePassesRepository extends ChangeNotifier
 
   static const String _passesCollection = 'passes';
   static const String _userPassesCollection = 'user_passes';
+  static const String _legacyUserPassesCollection = 'userPasses';
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance; // 
 
@@ -72,26 +73,52 @@ class FirebasePassesRepository extends ChangeNotifier
   }
   // load user pass from firebase save in local meomory _user passses
   Future<void> _loadUserPasses() async {
-    final snapshot =
-        await _firestore.collection(_userPassesCollection).get();
+    final snapshots = await Future.wait([
+      _firestore.collection(_userPassesCollection).get(),
+      _firestore.collection(_legacyUserPassesCollection).get(),
+    ]);
+
+    final snapshot = snapshots[0];
+    final legacySnapshot = snapshots[1];
+
+    final loaded = <UserPass>[
+      ...snapshot.docs.map(_userPassFromDoc),
+      ...legacySnapshot.docs.map(_userPassFromDoc),
+    ];
 
     _userPasses
       ..clear()
-      ..addAll(snapshot.docs.map(_userPassFromDoc));  // trasform the doc userpass to user pass model by using _userPassFromDoc
+      ..addAll(loaded);  // trasform the doc userpass to user pass model by using _userPassFromDoc
 
     notifyListeners();
   }
   // user to convert pass from firebase format to model by using document snapshot
   UserPass _userPassFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? <String, dynamic>{};  // get data from doc
-    final startTimestamp = data['start_date'] as Timestamp?;
-    final endTimestamp = data['end_date'] as Timestamp?;
+    final startRaw =
+        data['start_date'] ?? data['purchaseDate'] ?? data['startDate'];
+    final endRaw =
+        data['end_date'] ?? data['expirationDate'] ?? data['endDate'];
+
+    String toIsoString(dynamic value) {
+      if (value is Timestamp) {
+        return value.toDate().toIso8601String();
+      }
+      if (value is DateTime) {
+        return value.toIso8601String();
+      }
+      if (value is String) {
+        return value;
+      }
+      return '';
+    }
 
     return UserPassDto.fromMap({
       ...data,
       'id': doc.id,  // unique id doc for keeping update later
-      'start_date': startTimestamp?.toDate().toIso8601String() ?? '',
-      'end_date': endTimestamp?.toDate().toIso8601String() ?? '',
+      'start_date': toIsoString(startRaw),
+      'end_date': toIsoString(endRaw),
+      'is_active': data['is_active'] ?? data['isActive'] ?? false,
     }).toModel();
   }
 
@@ -115,18 +142,39 @@ class FirebasePassesRepository extends ChangeNotifier
     final userPassRef = _firestore.collection(_userPassesCollection).doc();
 
     // get only active pass 
-    final activeQuery = await _firestore
-        .collection(_userPassesCollection)
-        .where('user_id', isEqualTo: userId)
-        .where('is_active', isEqualTo: true)
-        .get();
+    final activeSnapshots = await Future.wait([
+      _firestore
+          .collection(_userPassesCollection)
+          .where('user_id', isEqualTo: userId)
+          .where('is_active', isEqualTo: true)
+          .get(),
+      _firestore
+          .collection(_legacyUserPassesCollection)
+          .where('userId', isEqualTo: userId)
+          .where('isActive', isEqualTo: true)
+          .get(),
+    ]);
+
+    final activeDocs = <DocumentSnapshot<Map<String, dynamic>>>[
+      ...activeSnapshots[0].docs,
+      ...activeSnapshots[1].docs,
+    ];
       // use runtracsaction for secure operation in this block success together
     await _firestore.runTransaction((tx) async {
       DateTime newEndDate = now.add(Duration(hours: pass!.durationHours));
 
-      for (final oldDoc in activeQuery.docs) {
-        final oldEndTimestamp = oldDoc.data()['end_date'] as Timestamp?;
-        final oldEndDate = oldEndTimestamp?.toDate();
+      for (final oldDoc in activeDocs) {
+        final oldData = oldDoc.data() ?? <String, dynamic>{};
+        final oldEndRaw =
+            oldData['end_date'] ?? oldData['expirationDate'] ?? oldData['endDate'];
+        DateTime? oldEndDate;
+        if (oldEndRaw is Timestamp) {
+          oldEndDate = oldEndRaw.toDate();
+        } else if (oldEndRaw is String) {
+          oldEndDate = DateTime.tryParse(oldEndRaw);
+        } else if (oldEndRaw is DateTime) {
+          oldEndDate = oldEndRaw;
+        }
 
         // only add duration if duration=true AND old pass is still valid
         if (oldEndDate != null && oldEndDate.isAfter(now)) {
@@ -134,7 +182,7 @@ class FirebasePassesRepository extends ChangeNotifier
         }
 
         // always deactivate old pass
-        tx.update(oldDoc.reference, {'is_active': false});
+        tx.update(oldDoc.reference, {'is_active': false, 'isActive': false});
       }
         // create userpass
       tx.set(userPassRef, {

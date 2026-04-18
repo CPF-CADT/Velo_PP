@@ -5,15 +5,15 @@ import 'package:provider/provider.dart';
 import 'package:velo_pp/data/repositories/auth/auth_repository.dart';
 import 'package:velo_pp/data/repositories/auth/mock_auth_repository.dart';
 import 'package:velo_pp/data/repositories/bikes/bikes_repository.dart';
-import 'package:velo_pp/data/repositories/bikes/mock_bikes_repository.dart';
+import 'package:velo_pp/data/repositories/bikes/bikes_repository_firebase.dart';
 import 'package:velo_pp/data/repositories/bookings/bookings_repository.dart';
-import 'package:velo_pp/data/repositories/bookings/mock_bookings_repository.dart';
+import 'package:velo_pp/data/repositories/bookings/bookings_repository_firebase.dart';
 import 'package:velo_pp/data/repositories/dock/dock_repository.dart';
 import 'package:velo_pp/data/repositories/dock/dock_repository_firebase.dart';
 import 'package:velo_pp/data/repositories/passes/pass_repository_firebase.dart';
 import 'package:velo_pp/data/repositories/passes/passes_repository.dart';
-import 'package:velo_pp/data/repositories/stations/mock_stations_repository.dart';
 import 'package:velo_pp/data/repositories/stations/stations_repository.dart';
+import 'package:velo_pp/data/repositories/stations/stations_repository_firebase.dart';
 
 
 
@@ -22,31 +22,33 @@ import 'package:velo_pp/services/station_service.dart';
 import 'package:velo_pp/ui/states/app_settings_state.dart';
 
 import 'firebase_options.dart';
-import 'package:velo_pp/data/mock/firebase_seed.dart';
 
 /// Configure provider dependencies for dev environment.
 /// Configure provider dependencies for dev environment.
 List<InheritedProvider> devProviders({
+  required FirebaseBikesRepository bikesRepository,
   required FirebasePassesRepository passesRepository,
+  required FirebaseBookingsRepository bookingsRepository,
+  required FirebaseStationsRepository stationsRepository,
   required FirebaseDockRepository dockRepository,
 }) {
   return [
     ChangeNotifierProvider<AppSettingsState>(create: (_) => AppSettingsState()),
     ChangeNotifierProvider<AuthRepository>(create: (_) => MockAuthRepository()),
     ChangeNotifierProvider<StationsRepository>(
-      create: (_) => MockStationsRepository(),
+      create: (_) => stationsRepository,
     ),
     Provider<StationGeographyService>(
       create: (_) => const MockStationGeographyService(),
     ),
     ChangeNotifierProvider<BikesRepository>(
-      create: (_) => MockBikesRepository(),
+      create: (_) => bikesRepository,
     ),
     ChangeNotifierProvider<PassesRepository>(
       create: (_) => passesRepository,
     ),
     ChangeNotifierProvider<BookingsRepository>(
-      create: (_) => MockBookingsRepository(),
+      create: (_) => bookingsRepository,
     ),
     ChangeNotifierProvider<DockRepository>(
       create: (_) => dockRepository,
@@ -63,18 +65,41 @@ Future<void> main() async {
   final passesRepository = FirebasePassesRepository();
   await passesRepository.loadInitialData();
 
+  final bookingsRepository = FirebaseBookingsRepository();
+  await bookingsRepository.loadInitialData();
+
+  final stationsRepository = FirebaseStationsRepository();
+  await stationsRepository.loadInitialData();
+
+  final bikesRepository = FirebaseBikesRepository();
+  await bikesRepository.loadInitialData();
+
   final dockRepository = FirebaseDockRepository();
+  await dockRepository.loadInitialData();
+  
  
 
-  runDevApp(passesRepository, dockRepository);
+  runDevApp(
+    bikesRepository,
+    passesRepository,
+    bookingsRepository,
+    stationsRepository,
+    dockRepository,
+  );
 }
 
 void runDevApp(
+  FirebaseBikesRepository bikesRepository,
   FirebasePassesRepository passesRepository,
+  FirebaseBookingsRepository bookingsRepository,
+  FirebaseStationsRepository stationsRepository,
   FirebaseDockRepository dockRepository,
 ) {
   mainCommon(devProviders(
+    bikesRepository: bikesRepository,
     passesRepository: passesRepository,
+    bookingsRepository: bookingsRepository,
+    stationsRepository: stationsRepository,
     dockRepository: dockRepository,
   ));
 }
