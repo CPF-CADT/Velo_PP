@@ -13,7 +13,6 @@ class ProfileViewModel extends ChangeNotifier {
     required AppSettingsState settings,
   }) : _authRepository = authRepository,
        _settings = settings {
-    _authRepository.addListener(_onDataChanged);
     _settings.addListener(_onDataChanged);
   }
 
@@ -43,7 +42,6 @@ class ProfileViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _authRepository.removeListener(_onDataChanged);
     _settings.removeListener(_onDataChanged);
     super.dispose();
   }

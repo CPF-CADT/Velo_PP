@@ -11,6 +11,7 @@ import 'package:velo_pp/model/dock.dart';
 import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/core/utils/async_value.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:velo_pp/ui/states/ride_state.dart';
 
 class RideSummary {
   final Booking booking;
@@ -39,9 +40,9 @@ class RidesViewModel extends ChangeNotifier {
   final StationsRepository _stationsRepository;
   final BikesRepository _bikesRepository;
   final DockRepository _dockRepository;
+  final RideState _rideState;
 
   final Set<String> _returningBookingIds = <String>{};
-  bool _isReloading = false;
 
   AsyncValue<List<RideSummary>> rides = AsyncValue.loading();
 
@@ -51,24 +52,27 @@ class RidesViewModel extends ChangeNotifier {
     required StationsRepository stationsRepository,
     required BikesRepository bikesRepository,
     required DockRepository dockRepository,
+    required RideState rideState,
   }) : _authRepository = authRepository,
        _bookingsRepository = bookingsRepository,
        _stationsRepository = stationsRepository,
        _bikesRepository = bikesRepository,
-       _dockRepository = dockRepository {
-    _bookingsRepository.addListener(_onRepositoryChanged);
-    _bikesRepository.addListener(_onRepositoryChanged);
-    _stationsRepository.addListener(_onRepositoryChanged);
+       _dockRepository = dockRepository,
+       _rideState = rideState {
+    _rideState.addListener(_onRideStateChanged);
   }
 
-  void _onRepositoryChanged() {
-    if (_isReloading) {
-      return;
-    }
-    _isReloading = true;
-    loadRides().whenComplete(() {
-      _isReloading = false;
-    });
+  void _onRideStateChanged() {
+    loadRides();
+  }
+
+  RideSummary summaryFromBooking(Booking booking) {
+    return RideSummary(
+      booking: booking,
+      bike: _bikesRepository.getBikeById(booking.bikeId),
+      startStation: _stationsRepository.getStationById(booking.startStationId),
+      endStation: _stationsRepository.getStationById(booking.endStationId),
+    );
   }
 
   Future<void> loadRides() async {
@@ -80,16 +84,7 @@ class RidesViewModel extends ChangeNotifier {
       final bookings = _bookingsRepository.getBookingsForUser(user.id);
       final summaries = bookings
           .map(
-            (booking) => RideSummary(
-              booking: booking,
-              bike: _bikesRepository.getBikeById(booking.bikeId),
-              startStation: _stationsRepository.getStationById(
-                booking.startStationId,
-              ),
-              endStation: _stationsRepository.getStationById(
-                booking.endStationId,
-              ),
-            ),
+            summaryFromBooking,
           )
           .toList();
       rides = AsyncValue.success(summaries);
@@ -155,7 +150,7 @@ class RidesViewModel extends ChangeNotifier {
         endStationId: nearest.station.id,
       );
 
-      await loadRides();
+      _rideState.notifyRideReturned();
       return ReturnResult(station: nearest.station, dock: nearest.dock);
     } finally {
       _returningBookingIds.remove(bookingId);
@@ -189,9 +184,7 @@ class RidesViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _bookingsRepository.removeListener(_onRepositoryChanged);
-    _bikesRepository.removeListener(_onRepositoryChanged);
-    _stationsRepository.removeListener(_onRepositoryChanged);
+    _rideState.removeListener(_onRideStateChanged);
     super.dispose();
   }
 }

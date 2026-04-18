@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/dtos/bike_dto.dart';
 import 'package:velo_pp/data/dtos/dock_dto.dart';
 import 'package:velo_pp/data/repositories/bikes/bikes_repository.dart';
 import 'package:velo_pp/model/bike.dart';
 
-class FirebaseBikesRepository extends ChangeNotifier implements BikesRepository {
+class FirebaseBikesRepository implements BikesRepository {
 	final FirebaseFirestore _firestore;
 	final String _bikesCollectionPath = 'bikes';
 	final String _docksCollectionPath = 'docks';
@@ -45,8 +44,6 @@ class FirebaseBikesRepository extends ChangeNotifier implements BikesRepository 
 						return DockDto.fromMap(data);
 					}),
 				);
-
-			notifyListeners();
 		} catch (e) {
 			throw Exception('Failed to load initial bike data: $e');
 		}
@@ -87,8 +84,6 @@ class FirebaseBikesRepository extends ChangeNotifier implements BikesRepository 
 
 			final bike = _bikes[index];
 			_bikes[index] = BikeDto(id: bike.id, model: bike.model, status: status);
-
-			notifyListeners();
 		} catch (e) {
 			throw Exception('Failed to update bike status: $e');
 		}

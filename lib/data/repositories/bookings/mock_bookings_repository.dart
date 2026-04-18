@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/dtos/booking_dto.dart';
 import 'package:velo_pp/data/mock/mock_data.dart';
 import 'package:velo_pp/data/repositories/bookings/bookings_repository.dart';
 import 'package:velo_pp/model/booking.dart';
 
-class MockBookingsRepository extends ChangeNotifier
-    implements BookingsRepository {
+class MockBookingsRepository implements BookingsRepository {
   final List<BookingDto> _bookings = List<BookingDto>.from(MockData.bookings);
 
   bool _isActiveStatus(String status) {
@@ -49,7 +47,6 @@ class MockBookingsRepository extends ChangeNotifier
     );
 
     _bookings.add(dto);
-    notifyListeners();
     return dto.toModel();
   }
 
@@ -91,6 +88,5 @@ class MockBookingsRepository extends ChangeNotifier
       timeToPickup: booking.timeToPickup,
       createdAt: booking.createdAt,
     );
-    notifyListeners();
   }
 }

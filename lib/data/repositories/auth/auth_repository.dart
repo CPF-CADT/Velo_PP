@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:velo_pp/model/user.dart';
 
-abstract class AuthRepository extends ChangeNotifier {
+abstract class AuthRepository {
   User get currentUser;
 }

@@ -17,6 +17,7 @@ import 'package:velo_pp/ui/screens/map/widgets/stations_bottom_sheet.dart';
 import 'package:velo_pp/ui/screens/map/widgets/map_search_overlay.dart';
 import 'package:velo_pp/ui/screens/map/widgets/station_modal.dart';
 import 'package:velo_pp/core/utils/distance_calculator.dart';
+import 'package:velo_pp/ui/states/ride_state.dart';
 
 class MapContent extends StatefulWidget {
   final VoidCallback onProfileTap;
@@ -190,6 +191,9 @@ class _MapContentState extends State<MapContent> {
         ),
       ),
     );
+
+    if (!mounted) return;
+    await context.read<MapViewModel>().loadStations();
 
     if (!mounted) return;
     setState(() {
@@ -460,8 +464,9 @@ class _MapContentState extends State<MapContent> {
 
   Widget _buildActionButton(List<Station> stations) {
     final loc = AppLocalizations.of(context);
-    final viewModel = context.watch<MapViewModel>();
-    final isReturnMode = viewModel.hasActiveRide;
+    final activeBooking = context.watch<RideState>().booking;
+    final isReturnMode =
+        activeBooking != null && activeBooking.status.toLowerCase() == 'active';
 
     return Positioned(
       bottom: isReturnMode ? 92 : 20,
@@ -523,8 +528,10 @@ class _MapContentState extends State<MapContent> {
   }
 
   Widget _buildRideStatusBanner() {
-    final viewModel = context.watch<MapViewModel>();
-    if (!viewModel.hasActiveRide) {
+    final activeBooking = context.watch<RideState>().booking;
+    final hasActiveRide =
+        activeBooking != null && activeBooking.status.toLowerCase() == 'active';
+    if (!hasActiveRide) {
       return const SizedBox.shrink();
     }
 

@@ -20,6 +20,7 @@ import 'package:velo_pp/data/repositories/stations/stations_repository_firebase.
 import 'package:velo_pp/main_common.dart';
 import 'package:velo_pp/services/station_service.dart';
 import 'package:velo_pp/ui/states/app_settings_state.dart';
+import 'package:velo_pp/ui/states/ride_state.dart';
 
 import 'firebase_options.dart';
 
@@ -34,23 +35,24 @@ List<InheritedProvider> devProviders({
 }) {
   return [
     ChangeNotifierProvider<AppSettingsState>(create: (_) => AppSettingsState()),
-    ChangeNotifierProvider<AuthRepository>(create: (_) => MockAuthRepository()),
-    ChangeNotifierProvider<StationsRepository>(
+    ChangeNotifierProvider<RideState>(create: (_) => RideState()),
+    Provider<AuthRepository>(create: (_) => MockAuthRepository()),
+    Provider<StationsRepository>(
       create: (_) => stationsRepository,
     ),
     Provider<StationGeographyService>(
       create: (_) => const MockStationGeographyService(),
     ),
-    ChangeNotifierProvider<BikesRepository>(
+    Provider<BikesRepository>(
       create: (_) => bikesRepository,
     ),
-    ChangeNotifierProvider<PassesRepository>(
+    Provider<PassesRepository>(
       create: (_) => passesRepository,
     ),
-    ChangeNotifierProvider<BookingsRepository>(
+    Provider<BookingsRepository>(
       create: (_) => bookingsRepository,
     ),
-    ChangeNotifierProvider<DockRepository>(
+    Provider<DockRepository>(
       create: (_) => dockRepository,
     ),
   ];

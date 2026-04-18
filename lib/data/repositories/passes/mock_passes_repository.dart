@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/dtos/pass_dto.dart';
 import 'package:velo_pp/data/dtos/user_pass_dto.dart';
 import 'package:velo_pp/data/mock/mock_data.dart';
@@ -6,7 +5,7 @@ import 'package:velo_pp/data/repositories/passes/passes_repository.dart';
 import 'package:velo_pp/model/pass.dart';
 import 'package:velo_pp/model/user_pass.dart';
 
-class MockPassesRepository extends ChangeNotifier implements PassesRepository {
+class MockPassesRepository implements PassesRepository {
   int _passCounter = 1;  // couter id
   final List<PassDto> _passes = List<PassDto>.from(MockData.passes); //copy list of pass
   final List<UserPassDto> _userPasses = List<UserPassDto>.from(   // copy list of userPass for modified

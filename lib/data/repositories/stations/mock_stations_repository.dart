@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/dtos/bike_dto.dart';
 import 'package:velo_pp/data/dtos/dock_dto.dart';
 import 'package:velo_pp/data/dtos/station_dto.dart';
@@ -6,8 +5,7 @@ import 'package:velo_pp/data/mock/mock_data.dart';
 import 'package:velo_pp/data/repositories/stations/stations_repository.dart';
 import 'package:velo_pp/model/station.dart';
 
-class MockStationsRepository extends ChangeNotifier
-    implements StationsRepository {
+class MockStationsRepository implements StationsRepository {
   final List<StationDto> _stations = List<StationDto>.from(MockData.stations);
   final List<BikeDto> _bikes = List<BikeDto>.from(MockData.bikes);
   final List<DockDto> _docks = List<DockDto>.from(MockData.docks);

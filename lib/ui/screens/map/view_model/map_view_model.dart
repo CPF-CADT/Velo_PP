@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/repositories/auth/auth_repository.dart';
 import 'package:velo_pp/data/repositories/bookings/bookings_repository.dart';
@@ -7,12 +5,14 @@ import 'package:velo_pp/data/repositories/stations/stations_repository.dart';
 import 'package:velo_pp/data/repositories/dock/dock_repository.dart';
 import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/core/utils/async_value.dart';
+import 'package:velo_pp/ui/states/ride_state.dart';
 
 class MapViewModel extends ChangeNotifier {
   final AuthRepository _authRepository;
   final BookingsRepository _bookingsRepository;
   final StationsRepository _stationsRepository;
   final DockRepository _dockRepository;
+  final RideState _rideState;
 
   AsyncValue<List<Station>> stations = AsyncValue.loading();
   final Map<String, int> _availableSlotsByStation = {};
@@ -22,14 +22,25 @@ class MapViewModel extends ChangeNotifier {
     required BookingsRepository bookingsRepository,
     required StationsRepository stationsRepository,
     required DockRepository dockRepository,
+    required RideState rideState,
   }) : _authRepository = authRepository,
        _bookingsRepository = bookingsRepository,
        _stationsRepository = stationsRepository,
-       _dockRepository = dockRepository {
-    _stationsRepository.addListener(_onStationsRepositoryChanged);
+       _dockRepository = dockRepository,
+       _rideState = rideState {
+    _rideState.addListener(_onRideStateChanged);
+  }
+
+  void _onRideStateChanged() {
+    _syncStationsAndSlots(showLoading: false);
   }
 
   bool get hasActiveRide {
+    final booking = _rideState.booking;
+    if (booking != null && booking.userId == _authRepository.currentUser.id) {
+      return booking.status.toLowerCase() == 'active';
+    }
+
     return _bookingsRepository.hasActiveBookingForUser(
       _authRepository.currentUser.id,
     );
@@ -48,10 +59,6 @@ class MapViewModel extends ChangeNotifier {
 
   Map<String, int> getAvailableSlotsMap() {
     return _availableSlotsByStation;
-  }
-
-  void _onStationsRepositoryChanged() {
-    unawaited(_syncStationsAndSlots(showLoading: false));
   }
 
   Future<void> _syncStationsAndSlots({required bool showLoading}) async {
@@ -84,7 +91,7 @@ class MapViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _stationsRepository.removeListener(_onStationsRepositoryChanged);
+    _rideState.removeListener(_onRideStateChanged);
     super.dispose();
   }
 }

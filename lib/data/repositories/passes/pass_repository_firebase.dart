@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/dtos/pass_dto.dart';
 import 'package:velo_pp/data/dtos/user_pass_dto.dart';
 import 'package:velo_pp/data/repositories/passes/passes_repository.dart';
 import 'package:velo_pp/model/pass.dart';
 import 'package:velo_pp/model/user_pass.dart';
 
-class FirebasePassesRepository extends ChangeNotifier
+class FirebasePassesRepository
     implements PassesRepository {
   FirebasePassesRepository();
 
@@ -68,8 +67,6 @@ class FirebasePassesRepository extends ChangeNotifier
               PassDto.fromMap({...doc.data(), 'id': doc.id}).toModel(),
         ),
       );
-
-    notifyListeners();
   }
   // load user pass from firebase save in local meomory _user passses
   Future<void> _loadUserPasses() async {
@@ -89,8 +86,6 @@ class FirebasePassesRepository extends ChangeNotifier
     _userPasses
       ..clear()
       ..addAll(loaded);  // trasform the doc userpass to user pass model by using _userPassFromDoc
-
-    notifyListeners();
   }
   // user to convert pass from firebase format to model by using document snapshot
   UserPass _userPassFromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
@@ -198,7 +193,6 @@ class FirebasePassesRepository extends ChangeNotifier
     final createdModel = _userPassFromDoc(created);
     
     await _loadUserPasses();
-    notifyListeners();
 
     return createdModel;
   }

@@ -6,6 +6,7 @@ import 'package:velo_pp/core/theme/app_spacing.dart';
 import 'package:velo_pp/core/theme/app_text_styles.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
 import 'package:velo_pp/ui/screens/rides/view_model/rides_view_model.dart';
+import 'package:velo_pp/ui/states/ride_state.dart';
 
 class RideContent extends StatelessWidget {
   const RideContent({super.key});
@@ -14,18 +15,27 @@ class RideContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final viewModel = context.watch<RidesViewModel>();
+    final globalBooking = context.watch<RideState>().booking;
     final state = viewModel.rides;
     final theme = Theme.of(context);
 
-    if (state.state == AsyncValueState.loading) {
+    final hasGlobalActiveRide =
+        globalBooking != null && globalBooking.status.toLowerCase() == 'active';
+
+    final data = List<RideSummary>.from(state.data ?? const []);
+    if (globalBooking != null &&
+        !data.any((summary) => summary.booking.id == globalBooking.id)) {
+      data.insert(0, viewModel.summaryFromBooking(globalBooking));
+    }
+
+    if (state.state == AsyncValueState.loading && !hasGlobalActiveRide) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.state == AsyncValueState.error) {
+    if (state.state == AsyncValueState.error && data.isEmpty) {
       return Center(child: Text(state.error.toString()));
     }
 
-    final data = state.data ?? [];
     if (data.isEmpty) {
       return SafeArea(
         child: SingleChildScrollView(

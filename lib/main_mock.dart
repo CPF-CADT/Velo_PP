@@ -14,28 +14,30 @@ import 'package:velo_pp/data/repositories/stations/stations_repository.dart';
 import 'package:velo_pp/main_common.dart';
 import 'package:velo_pp/services/station_service.dart';
 import 'package:velo_pp/ui/states/app_settings_state.dart';
+import 'package:velo_pp/ui/states/ride_state.dart';
 
 /// Configure provider dependencies for mock environment.
 List<InheritedProvider> get mockProviders {
   return [
     ChangeNotifierProvider<AppSettingsState>(create: (_) => AppSettingsState()),
-    ChangeNotifierProvider<AuthRepository>(create: (_) => MockAuthRepository()),
-    ChangeNotifierProvider<StationsRepository>(
+    ChangeNotifierProvider<RideState>(create: (_) => RideState()),
+    Provider<AuthRepository>(create: (_) => MockAuthRepository()),
+    Provider<StationsRepository>(
       create: (_) => MockStationsRepository(),
     ),
     Provider<StationGeographyService>(
       create: (_) => const MockStationGeographyService(),
     ),
-    ChangeNotifierProvider<BikesRepository>(
+    Provider<BikesRepository>(
       create: (_) => MockBikesRepository(),
     ),
-    ChangeNotifierProvider<PassesRepository>(
+    Provider<PassesRepository>(
       create: (_) => MockPassesRepository(),
     ),
-    ChangeNotifierProvider<BookingsRepository>(
+    Provider<BookingsRepository>(
       create: (_) => MockBookingsRepository(),
     ),
-    ChangeNotifierProvider<DockRepository>(create: (_) => MockDockRepository()),
+    Provider<DockRepository>(create: (_) => MockDockRepository()),
   ];
 }
 

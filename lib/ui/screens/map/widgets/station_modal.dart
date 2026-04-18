@@ -30,7 +30,7 @@ class StationModal extends StatelessWidget {
       station.location,
     );
     final distanceKm = CustomDistanceCalculator.formatDistance(distance);
-    final repo = context.watch<BikesRepository>();
+    final repo = context.read<BikesRepository>();
     final availableBikesFromRepo = repo
         .getAvailableBikesForStation(station.id)
         .length;
@@ -96,14 +96,18 @@ class StationModal extends StatelessWidget {
               ),
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => StationScreen(
-                      station: station,
+                if (onSelect != null) {
+                  onSelect!();
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StationScreen(
+                        station: station,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               },
               child: Text(
                 loc.get('select'),

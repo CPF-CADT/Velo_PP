@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/dtos/bike_dto.dart';
 import 'package:velo_pp/data/dtos/dock_dto.dart';
 import 'package:velo_pp/data/dtos/station_dto.dart';
@@ -8,7 +7,7 @@ import 'package:velo_pp/model/bike.dart';
 import 'package:velo_pp/model/dock.dart';
 import 'package:velo_pp/model/station.dart';
 
-class FirebaseStationsRepository extends ChangeNotifier
+class FirebaseStationsRepository
     implements StationsRepository {
   final FirebaseFirestore _firestore;
   final String _stationsCollection = 'stations';
@@ -63,8 +62,6 @@ class FirebaseStationsRepository extends ChangeNotifier
             return DockDto.fromMap(data).toModel();
           }),
         );
-
-      notifyListeners();
     } catch (e) {
       throw Exception('Failed to load initial station data: $e');
     }

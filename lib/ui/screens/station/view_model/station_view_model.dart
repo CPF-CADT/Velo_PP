@@ -7,6 +7,7 @@ import 'package:velo_pp/data/repositories/passes/passes_repository.dart';
 import 'package:velo_pp/model/booking.dart';
 import 'package:velo_pp/model/dock.dart';
 import 'package:velo_pp/core/utils/async_value.dart';
+import 'package:velo_pp/ui/states/ride_state.dart';
 
 class StationViewModel extends ChangeNotifier {
   final AuthRepository _authRepository;
@@ -14,6 +15,7 @@ class StationViewModel extends ChangeNotifier {
   final BookingsRepository _bookingsRepository;
   final DockRepository _dockRepository;
   final PassesRepository _passesRepository;
+  final RideState _rideState;
 
   AsyncValue<List<Dock>> slots = AsyncValue.loading();
   String? _currentStationId;
@@ -26,11 +28,13 @@ class StationViewModel extends ChangeNotifier {
     required BookingsRepository bookingsRepository,
     required DockRepository dockRepository,
     required PassesRepository passesRepository,
+     required RideState rideState,
   }) : _authRepository = authRepository,
        _bikesRepository = bikesRepository,
        _bookingsRepository = bookingsRepository,
        _dockRepository = dockRepository,
-       _passesRepository = passesRepository;
+       _passesRepository = passesRepository,
+       _rideState = rideState;
 
   String? get selectedDockId => _selectedDockId;
   bool get isBooking => _isBooking;
@@ -160,6 +164,7 @@ class StationViewModel extends ChangeNotifier {
 
       _selectedDockId = null;
       await loadSlots(stationId);
+      _rideState.notifyRideBooked(booking);
       return booking;
     } finally {
       _isBooking = false;

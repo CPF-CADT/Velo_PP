@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/dtos/booking_dto.dart';
 import 'package:velo_pp/data/repositories/bookings/bookings_repository.dart';
 import 'package:velo_pp/model/booking.dart';
 
-class FirebaseBookingsRepository extends ChangeNotifier
+class FirebaseBookingsRepository
 		implements BookingsRepository {
 	final FirebaseFirestore _firestore;
 	final String _collectionPath = 'bookings';
@@ -21,8 +20,6 @@ class FirebaseBookingsRepository extends ChangeNotifier
 			_bookings
 				..clear()
 				..addAll(snapshot.docs.map(_bookingFromDoc));
-
-			notifyListeners();
 		} catch (e) {
 			throw Exception('Failed to load initial booking data: $e');
 		}
@@ -105,7 +102,6 @@ class FirebaseBookingsRepository extends ChangeNotifier
 			final createdBooking = _bookingFromDoc(createdDoc);
 
 			_bookings.add(createdBooking);
-			notifyListeners();
 
 			return createdBooking;
 		} catch (e) {
@@ -161,8 +157,6 @@ class FirebaseBookingsRepository extends ChangeNotifier
 					createdAt: current.createdAt,
 				);
 			}
-
-			notifyListeners();
 		} catch (e) {
 			throw Exception('Failed to complete booking: $e');
 		}

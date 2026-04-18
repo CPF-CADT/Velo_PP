@@ -7,6 +7,7 @@ import 'package:velo_pp/data/repositories/dock/dock_repository.dart';
 import 'package:velo_pp/data/repositories/passes/passes_repository.dart';
 import 'package:velo_pp/ui/screens/station/content/station_content.dart';
 import 'package:velo_pp/ui/screens/station/view_model/station_view_model.dart';
+import 'package:velo_pp/ui/states/ride_state.dart';
 import 'package:velo_pp/model/station.dart';
 
 class StationScreen extends StatelessWidget {
@@ -24,6 +25,7 @@ class StationScreen extends StatelessWidget {
         bookingsRepository: context.read<BookingsRepository>(),
         dockRepository: context.read<DockRepository>(),
         passesRepository: context.read<PassesRepository>(),
+        rideState: context.read<RideState>(),
       ),
       child: StationContent(station: station, onOpenPassesTap: onOpenPassesTap),
     );

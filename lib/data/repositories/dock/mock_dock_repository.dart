@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:velo_pp/data/dtos/dock_dto.dart';
 import 'package:velo_pp/data/mock/mock_data.dart';
 import 'package:velo_pp/data/repositories/dock/dock_repository.dart';
 import 'package:velo_pp/model/dock.dart';
 
-class MockDockRepository extends ChangeNotifier implements DockRepository {
+class MockDockRepository implements DockRepository {
   final List<DockDto> _docks = List<DockDto>.from(MockData.docks);
 
   @override
@@ -30,7 +29,6 @@ class MockDockRepository extends ChangeNotifier implements DockRepository {
         slotNumber: dock.slotNumber,
         status: status,
       );
-      notifyListeners();
     }
   }
 
@@ -61,7 +59,6 @@ class MockDockRepository extends ChangeNotifier implements DockRepository {
       slotNumber: dock.slotNumber,
       status: 'available',
     );
-    notifyListeners();
   }
 
   @override
@@ -84,6 +81,5 @@ class MockDockRepository extends ChangeNotifier implements DockRepository {
       slotNumber: dock.slotNumber,
       status: 'occupied',
     );
-    notifyListeners();
   }
 }

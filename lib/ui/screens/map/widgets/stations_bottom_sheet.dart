@@ -3,7 +3,6 @@ import 'package:latlong2/latlong.dart' show LatLng;
 import 'package:velo_pp/model/station.dart';
 import 'package:velo_pp/core/utils/distance_calculator.dart';
 import 'package:velo_pp/l10n/app_localizations.dart';
-import 'package:velo_pp/ui/screens/station/station_screen.dart';
 import 'package:velo_pp/core/theme/app_colors.dart';
 import 'package:velo_pp/core/theme/app_spacing.dart';
 import 'package:velo_pp/core/theme/app_text_styles.dart';
@@ -91,15 +90,7 @@ class StationsBottomSheet extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => StationScreen(
-                          station: station,
-                        ),
-                      ),
-                    );
+                    onStationSelected(station);
                   },
                   child: _buildStationCard(station, isSelected, loc, availableSlots),
                 );

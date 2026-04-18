@@ -1,10 +1,9 @@
- import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:velo_pp/data/dtos/dock_dto.dart';
 import 'package:velo_pp/data/repositories/dock/dock_repository.dart';
 import 'package:velo_pp/model/dock.dart';
 
-class FirebaseDockRepository extends ChangeNotifier implements DockRepository {
+class FirebaseDockRepository implements DockRepository {
   final FirebaseFirestore _firestore;
   final String _collectionPath = 'docks';
 
@@ -27,8 +26,6 @@ class FirebaseDockRepository extends ChangeNotifier implements DockRepository {
             return DockDto.fromMap(data).toModel();
           }),
         );
-
-      notifyListeners();
     } catch (e) {
       throw Exception('Failed to load initial dock data: $e');
     }
@@ -81,8 +78,6 @@ class FirebaseDockRepository extends ChangeNotifier implements DockRepository {
           status: status,
         );
       }
-
-      notifyListeners(); // Matches mock behavior
     } catch (e) {
       throw Exception('Failed to update dock status: $e');
     }
@@ -135,8 +130,6 @@ class FirebaseDockRepository extends ChangeNotifier implements DockRepository {
           status: 'available',
         );
       }
-
-      notifyListeners(); // Matches mock behavior
     } catch (e) {
       throw Exception('Failed to checkout bike: $e');
     }
@@ -165,8 +158,6 @@ class FirebaseDockRepository extends ChangeNotifier implements DockRepository {
           status: 'occupied',
         );
       }
-
-      notifyListeners(); // Matches mock behavior
     } catch (e) {
       throw Exception('Failed to assign bike to dock: $e');
     }
