@@ -55,7 +55,7 @@ class PassesViewModel extends ChangeNotifier {
   }
 
   // buy pass
-  Future<void> buyPass(String passId, {bool addDuration = false}) async {
+  Future<void> buyPass(String passId) async {
     _buyingPassId = passId; // store the purchase pass
     notifyListeners();
 

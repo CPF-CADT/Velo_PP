@@ -27,7 +27,7 @@ class PassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = isFeatured ? AppColors.darkSurface : AppColors.gray100;
+    final bgColor = isFeatured ? AppColors.darkSurface : AppColors.white;
     final textColor = isFeatured ? AppColors.white : AppColors.textPrimary;
 
     return AppCard(

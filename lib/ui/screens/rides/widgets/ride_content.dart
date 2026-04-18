@@ -169,11 +169,7 @@ class _SummaryCard extends StatelessWidget {
       padding: AppSpacing.all(AppSpacing.md),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSpacing.r18),
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.secondary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppColors.primary,
       ),
       child: Row(
         children: [
